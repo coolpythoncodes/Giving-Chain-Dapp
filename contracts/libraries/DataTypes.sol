@@ -25,4 +25,10 @@ library DataTypes {
         string supportWord;
 
     }
+
+    struct Donor{
+        uint amount;
+        uint timestamp;
+        address donorAddress;
+    }
 }

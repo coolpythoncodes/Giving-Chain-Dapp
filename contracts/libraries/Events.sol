@@ -9,4 +9,11 @@ library Events {
         uint startAt,
         uint endAt
         );
+
+        event FundCampaign(
+        uint indexed _id,
+        address indexed donor,
+        uint amount,
+        uint tip
+        );
 }
