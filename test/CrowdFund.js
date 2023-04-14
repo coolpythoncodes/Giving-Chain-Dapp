@@ -1,4 +1,4 @@
-const { expect } = require("chai");
+const { expect, assert } = require("chai");
 const { ethers } = require("hardhat");
 
 describe("CrowdFund", () => {
@@ -188,7 +188,6 @@ describe("CrowdFund", () => {
         );
 
       const campaign = await crowdFund.campaigns(campaignId);
-      console.log(parseInt(ethers.utils.formatEther(campaign.amountRaised)));
       expect(
         parseInt(ethers.utils.formatEther(campaign.amountRaised))
       ).to.equal(amount);
@@ -212,8 +211,154 @@ describe("CrowdFund", () => {
       const totalAmountFundedByAddress = await crowdFund.amountFundedByCampaignId(campaignId, campaignFunder.address)
       expect(parseInt(ethers.utils.formatEther(totalAmountFundedByAddress))).to.equal(1000)
 
-      // const donorsById = await crowdFund.donorsByCampaignId(campaignId)
-      // console.log(donorsById)
+      const donors = await crowdFund.donorsByCampaignId(campaignId,0);
+      assert.equal(parseInt(ethers.utils.formatEther(donors[0])), amount,"incorrect donation")
+      assert.equal(donors[2], campaignFunder.address, "incorrect funder address")
     });
+
+    it('should revert if caller balance is insufficient', async () => {
+      const campaignId = 0;
+      const category = "Education";
+      const location = "Port Harcourt, Nigeria";
+      const goal = 100;
+      const description = "We need new computers for our computer lab";
+      const startAt = Math.floor(Date.now() / 1000) + 7200; // Start after 2 hours
+      const endAt = startAt + 86400; // End after a day
+
+      const amount = 50000;
+      const tip = 50;
+
+      await crowdFund.createCampaign(
+        category,
+        goal,
+        description,
+        startAt,
+        endAt,
+        location
+      );
+
+      await ethers.provider.send("evm_increaseTime", [7200]);
+      await ethers.provider.send("evm_mine");
+
+      expect(crowdFund
+        .connect(campaignFunder)
+        .fundCampaign(
+          campaignId,
+          ethers.utils.parseEther(amount.toString()),
+          ethers.utils.parseEther(tip.toString())
+        )).to.be.revertedWith("Insufficient balance")
+
+    });
+
+    it('should revert if amount to fund a campaign is zero', async () => {
+      const campaignId = 0;
+      const category = "Education";
+      const location = "Port Harcourt, Nigeria";
+      const goal = 100;
+      const description = "We need new computers for our computer lab";
+      const blockNumber = await ethers.provider.getBlockNumber();
+      const block = await ethers.provider.getBlock(blockNumber);
+      const startAt = block.timestamp + 10800; // Start after 3 hours
+      const endAt = startAt + 86400; // End after a day
+
+      const amount = 0;
+      const tip = 50;
+
+      await crowdFund.createCampaign(
+        category,
+        goal,
+        description,
+        startAt,
+        endAt,
+        location
+      );
+
+      await ethers.provider.send("evm_increaseTime", [10800]);
+      await ethers.provider.send("evm_mine");
+
+      expect(crowdFund
+        .connect(campaignFunder)
+        .fundCampaign(
+          campaignId,
+          ethers.utils.parseEther(amount.toString()),
+          ethers.utils.parseEther(tip.toString())
+        )).to.be.revertedWith("amount should not be zero")
+
+    });
+
+    it('should revert if campaign has not started', async () => {
+      const campaignId = 0;
+      const category = "Education";
+      const location = "Port Harcourt, Nigeria";
+      const goal = 100;
+      const description = "We need new computers for our computer lab";
+      const blockNumber = await ethers.provider.getBlockNumber();
+      const block = await ethers.provider.getBlock(blockNumber);
+      const startAt = block.timestamp + 10800; // Start after 3 hours
+      const endAt = startAt + 86400; // End after a day
+
+      const amount = 500;
+      const tip = 50;
+
+      await crowdFund.createCampaign(
+        category,
+        goal,
+        description,
+        startAt,
+        endAt,
+        location
+      );
+
+      // await ethers.provider.send("evm_increaseTime", [10800]);
+      // await ethers.provider.send("evm_mine");
+
+      expect(crowdFund
+        .connect(campaignFunder)
+        .fundCampaign(
+          campaignId,
+          ethers.utils.parseEther(amount.toString()),
+          ethers.utils.parseEther(tip.toString())
+        )).to.be.revertedWith("Campaign has not started")
+
+    });
+
+    it('should revert if campaign has ended started', async () => {
+      const campaignId = 0;
+      const category = "Education";
+      const location = "Port Harcourt, Nigeria";
+      const goal = 100;
+      const description = "We need new computers for our computer lab";
+      const blockNumber = await ethers.provider.getBlockNumber();
+      const block = await ethers.provider.getBlock(blockNumber);
+      const startAt = block.timestamp + 10800; // Start after 3 hours
+      const endAt = startAt + 86400; // End after a day
+
+      const amount = 500;
+      const tip = 50;
+
+      await crowdFund.createCampaign(
+        category,
+        goal,
+        description,
+        startAt,
+        endAt,
+        location
+      );
+
+      await ethers.provider.send("evm_increaseTime", [172800]);
+      await ethers.provider.send("evm_mine");
+
+      expect(crowdFund
+        .connect(campaignFunder)
+        .fundCampaign(
+          campaignId,
+          ethers.utils.parseEther(amount.toString()),
+          ethers.utils.parseEther(tip.toString())
+        )).to.be.revertedWith("Campaign has not started")
+
+    });
+
   });
+
+
 });
