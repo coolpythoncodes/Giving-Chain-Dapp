@@ -154,7 +154,7 @@ describe("CrowdFund", () => {
     });
   });
 
-  describe("fundCampaign", () => {
+  describe("Fund Campaign", () => {
     it("should fund a campaign successfully", async () => {
       const campaignId = 0;
       const category = "Education";
@@ -206,17 +206,31 @@ describe("CrowdFund", () => {
 
       // check if total tip is correct
       const totalTipById = await crowdFund.totalTipByCampaignId(campaignId);
-      expect(parseInt(ethers.utils.formatEther(totalTipById))).to.equal(tip)
+      expect(parseInt(ethers.utils.formatEther(totalTipById))).to.equal(tip);
 
-      const totalAmountFundedByAddress = await crowdFund.amountFundedByCampaignId(campaignId, campaignFunder.address)
-      expect(parseInt(ethers.utils.formatEther(totalAmountFundedByAddress))).to.equal(1000)
+      const totalAmountFundedByAddress =
+        await crowdFund.amountFundedByCampaignId(
+          campaignId,
+          campaignFunder.address
+        );
+      expect(
+        parseInt(ethers.utils.formatEther(totalAmountFundedByAddress))
+      ).to.equal(1000);
 
-      const donors = await crowdFund.donorsByCampaignId(campaignId,0);
-      assert.equal(parseInt(ethers.utils.formatEther(donors[0])), amount,"incorrect donation")
-      assert.equal(donors[2], campaignFunder.address, "incorrect funder address")
+      const donors = await crowdFund.donorsByCampaignId(campaignId, 0);
+      assert.equal(
+        parseInt(ethers.utils.formatEther(donors[0])),
+        amount,
+        "incorrect donation"
+      );
+      assert.equal(
+        donors[2],
+        campaignFunder.address,
+        "incorrect funder address"
+      );
     });
 
-    it('should revert if caller balance is insufficient', async () => {
+    it("should revert if caller balance is insufficient", async () => {
       const campaignId = 0;
       const category = "Education";
       const location = "Port Harcourt, Nigeria";
@@ -240,17 +254,18 @@ describe("CrowdFund", () => {
       await ethers.provider.send("evm_increaseTime", [7200]);
       await ethers.provider.send("evm_mine");
 
-      expect(crowdFund
-        .connect(campaignFunder)
-        .fundCampaign(
-          campaignId,
-          ethers.utils.parseEther(amount.toString()),
-          ethers.utils.parseEther(tip.toString())
-        )).to.be.revertedWith("Insufficient balance")
-
+      expect(
+        crowdFund
+          .connect(campaignFunder)
+          .fundCampaign(
+            campaignId,
+            ethers.utils.parseEther(amount.toString()),
+            ethers.utils.parseEther(tip.toString())
+          )
+      ).to.be.revertedWith("Insufficient balance");
     });
 
-    it('should revert if amount to fund a campaign is zero', async () => {
+    it("should revert if amount to fund a campaign is zero", async () => {
       const campaignId = 0;
       const category = "Education";
       const location = "Port Harcourt, Nigeria";
@@ -276,17 +291,18 @@ describe("CrowdFund", () => {
       await ethers.provider.send("evm_increaseTime", [10800]);
       await ethers.provider.send("evm_mine");
 
-      expect(crowdFund
-        .connect(campaignFunder)
-        .fundCampaign(
-          campaignId,
-          ethers.utils.parseEther(amount.toString()),
-          ethers.utils.parseEther(tip.toString())
-        )).to.be.revertedWith("amount should not be zero")
-
+      expect(
+        crowdFund
+          .connect(campaignFunder)
+          .fundCampaign(
+            campaignId,
+            ethers.utils.parseEther(amount.toString()),
+            ethers.utils.parseEther(tip.toString())
+          )
+      ).to.be.revertedWith("amount should not be zero");
     });
 
-    it('should revert if campaign has not started', async () => {
+    it("should revert if campaign has not started", async () => {
       const campaignId = 0;
       const category = "Education";
       const location = "Port Harcourt, Nigeria";
@@ -312,17 +328,18 @@ describe("CrowdFund", () => {
       // await ethers.provider.send("evm_increaseTime", [10800]);
       // await ethers.provider.send("evm_mine");
 
-      expect(crowdFund
-        .connect(campaignFunder)
-        .fundCampaign(
-          campaignId,
-          ethers.utils.parseEther(amount.toString()),
-          ethers.utils.parseEther(tip.toString())
-        )).to.be.revertedWith("Campaign has not started")
-
+      expect(
+        crowdFund
+          .connect(campaignFunder)
+          .fundCampaign(
+            campaignId,
+            ethers.utils.parseEther(amount.toString()),
+            ethers.utils.parseEther(tip.toString())
+          )
+      ).to.be.revertedWith("Campaign has not started");
     });
 
-    it('should revert if campaign has ended started', async () => {
+    it("should revert if campaign has ended started", async () => {
       const campaignId = 0;
       const category = "Education";
       const location = "Port Harcourt, Nigeria";
@@ -348,17 +365,107 @@ describe("CrowdFund", () => {
       await ethers.provider.send("evm_increaseTime", [172800]);
       await ethers.provider.send("evm_mine");
 
-      expect(crowdFund
+      expect(
+        crowdFund
+          .connect(campaignFunder)
+          .fundCampaign(
+            campaignId,
+            ethers.utils.parseEther(amount.toString()),
+            ethers.utils.parseEther(tip.toString())
+          )
+      ).to.be.revertedWith("Campaign has not started");
+    });
+  });
+
+  describe("Claim campaign funds", () => {
+    let fundraiser;
+    let anotherUser;
+    const campaignId = 0;
+
+    beforeEach(async () => {
+      [fundraiser, anotherUser] = await ethers.getSigners();
+      const category = "Education";
+      const location = "Port Harcourt, Nigeria";
+      const goal = 100;
+      const description = "We need new computers for our computer lab";
+      const blockNumber = await ethers.provider.getBlockNumber();
+      const block = await ethers.provider.getBlock(blockNumber);
+      const startAt = block.timestamp + 10800; // Start after 3 hours
+      const endAt = startAt + 86400; // End after a day
+
+      await crowdFund
+        .connect(fundraiser)
+        .createCampaign(category, goal, description, startAt, endAt, location);
+    });
+
+    it("should allow fundraiser to claim funds", async () => {
+      const campaignId = 0;
+
+      await ethers.provider.send("evm_increaseTime", [172800]);
+      await ethers.provider.send("evm_mine");
+      expect(crowdFund.connect(fundraiser).claim(campaignId))
+        .to.emit(crowdFund, "Claim")
+        .withArgs(campaignId);
+
+        // check if claim changes to true
+      const campaign = await crowdFund.campaigns(campaignId);
+      assert.equal(campaign.claimed, true, "claimed is false")
+    });
+
+    it("should revert if caller is not fundraiser", async () => {
+      const campaignId = 0;
+      await ethers.provider.send("evm_increaseTime", [172800]);
+      await ethers.provider.send("evm_mine");
+      expect(
+        crowdFund.connect(anotherUser).claim(campaignId)
+      ).to.be.revertedWith("caller not fundraiser");
+    });
+
+    it("should revert if campaign has not ended", async () => {
+      expect(
+        crowdFund.connect(fundraiser).claim(campaignId)
+      ).to.be.revertedWith("caller not fundraiser");
+    });
+
+    it("should revert if campaign funds has been claimed", async () => {
+      await ethers.provider.send("evm_increaseTime", [172800]);
+      await ethers.provider.send("evm_mine");
+
+      await crowdFund.connect(fundraiser).claim(campaignId);
+      expect(
+        crowdFund.connect(fundraiser).claim(campaignId)
+      ).to.be.revertedWith("claimed");
+    });
+
+    it("should increase token of fundraiser after claim", async () => {
+      const amount = 500;
+      const tip = 50;
+
+      const previousBalance = await giveChainToken.balanceOf(
+        fundraiser.address
+      );
+
+      await ethers.provider.send("evm_increaseTime", [10800]);
+      // await ethers.provider.send("evm_increaseTime", [172800]);
+      await ethers.provider.send("evm_mine");
+
+      await crowdFund
         .connect(campaignFunder)
         .fundCampaign(
           campaignId,
           ethers.utils.parseEther(amount.toString()),
           ethers.utils.parseEther(tip.toString())
-        )).to.be.revertedWith("Campaign has not started")
+        );
 
+      await ethers.provider.send("evm_increaseTime", [172800]);
+      await ethers.provider.send("evm_mine");
+
+      await crowdFund.connect(fundraiser).claim(campaignId);
+      const currentBalance = await giveChainToken.balanceOf(fundraiser.address);
+      expect(parseInt(ethers.utils.formatEther(currentBalance))).to.equal(
+        parseInt(ethers.utils.formatEther(previousBalance)) +
+          parseInt(ethers.utils.formatEther(currentBalance))
+      );
     });
-
   });
-
-
 });

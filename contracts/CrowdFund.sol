@@ -71,9 +71,25 @@ contract CrowdFund is Ownable{
         token.safeTransferFrom(msg.sender, address(this), _amount + tip);
 
         emit Events.FundCampaign(_campaignId,msg.sender,_amount,tip);
-
-
     }
+
+    function claim(uint _campaignId)  external {
+        DataTypes.Campaign storage campaign = campaigns[_campaignId];
+
+        require(msg.sender == campaign.fundraiser, "caller not fundraiser");
+        require(block.timestamp > campaign.endAt, "campaign has not ended");
+        require(!campaign.claimed, 'claimed');
+
+        campaign.claimed = true;
+
+        token.safeTransfer(msg.sender,campaign.amountRaised);
+
+        emit Events.Claim(_campaignId);
+    }
+
+    // function withdrawTips()  returns () {
+        
+    // }
 
 
 }

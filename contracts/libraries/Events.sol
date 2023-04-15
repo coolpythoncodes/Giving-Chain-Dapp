@@ -16,4 +16,8 @@ library Events {
         uint amount,
         uint tip
         );
+
+        event Claim(
+        uint indexed _id
+        );
 }
