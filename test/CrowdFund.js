@@ -205,8 +205,8 @@ describe("CrowdFund", () => {
         .withArgs(campaignId, campaignFunder.address, amount, tip);
 
       // check if total tip is correct
-      const totalTipById = await crowdFund.totalTipByCampaignId(campaignId);
-      expect(parseInt(ethers.utils.formatEther(totalTipById))).to.equal(tip);
+      const totalTip= await crowdFund.totalTip();
+      expect(parseInt(ethers.utils.formatEther(totalTip))).to.equal(tip);
 
       const totalAmountFundedByAddress =
         await crowdFund.amountFundedByCampaignId(
@@ -485,7 +485,7 @@ describe("CrowdFund", () => {
       const startAt = block.timestamp + 10800; // Start after 3 hours
       const endAt = startAt + 86400; // End after a day
 
-      const amount = 500;
+      const amount = 50;
       const tip = 50;
 
       await crowdFund
@@ -504,9 +504,17 @@ describe("CrowdFund", () => {
         );
     });
 
-    it('should allow owner withdraw tips', () => {
-      
+    it('should allow owner withdraw tips', async () => {
+      const prevBalance = await giveChainToken.balanceOf(crowdFund.address)
+      const prevTotalTip = await crowdFund.totalTip()
+
+      expect(crowdFund.connect(owner).withdrawTips()).to.emit(crowdFund,"WithdrawTips").withArgs(prevTotalTip)
+
+      const currentTotalTip = await crowdFund.totalTip()
+
+      const currentBalance = await giveChainToken.balanceOf(crowdFund.address)
+      assert.equal(parseInt(ethers.utils.formatEther(currentBalance)), parseInt(ethers.utils.formatEther(prevBalance)) - parseInt(ethers.utils.formatEther(currentTotalTip)), "incorrect token balance")
     });
     
   });
-});
+});          

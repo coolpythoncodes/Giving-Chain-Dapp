@@ -15,12 +15,14 @@ contract CrowdFund is Ownable{
     IERC20 public immutable token;
     Counters.Counter public campaignId;
 
+    uint public totalTip;
+
+
 
     mapping (uint => DataTypes.Campaign) public campaigns;
     mapping (uint => DataTypes.WordsOfSupport[]) public wordsOfSupport;
     mapping (uint => DataTypes.CampaignUpdate[]) public campaignUpdates;
     mapping (uint => mapping (address => uint)) public amountFundedByCampaignId;
-    mapping (uint => uint) public totalTipByCampaignId;
     mapping (uint => DataTypes.Donor[]) public donorsByCampaignId;
 
     constructor(address _address) {
@@ -61,7 +63,7 @@ contract CrowdFund is Ownable{
         
         campaign.amountRaised += _amount;
         amountFundedByCampaignId[_campaignId][msg.sender] += _amount;
-        totalTipByCampaignId[_campaignId] += tip;
+        totalTip += tip;
         donorsByCampaignId[_campaignId].push(DataTypes.Donor({
             amount: _amount,
             timestamp: block.timestamp,
@@ -88,10 +90,10 @@ contract CrowdFund is Ownable{
     }
 
     function withdrawTips() external onlyOwner {
-        uint value = token.balanceOf(address(this));
-        token.safeTransfer(msg.sender,value);
+        require(owner() == msg.sender,"caller not owner");
+        token.safeTransfer(msg.sender,totalTip);
 
-        emit Events.WithdrawTips(value);
+        emit Events.WithdrawTips(totalTip);
     }
 
 
