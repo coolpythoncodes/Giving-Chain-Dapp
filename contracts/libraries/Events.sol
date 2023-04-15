@@ -20,4 +20,8 @@ library Events {
         event Claim(
         uint indexed _id
         );
+
+        event WithdrawTips(
+                uint value
+        );
 }

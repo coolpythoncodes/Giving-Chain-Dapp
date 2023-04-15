@@ -87,9 +87,12 @@ contract CrowdFund is Ownable{
         emit Events.Claim(_campaignId);
     }
 
-    // function withdrawTips()  returns () {
-        
-    // }
+    function withdrawTips() external onlyOwner {
+        uint value = token.balanceOf(address(this));
+        token.safeTransfer(msg.sender,value);
+
+        emit Events.WithdrawTips(value);
+    }
 
 
 }

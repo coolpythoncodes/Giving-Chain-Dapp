@@ -407,9 +407,9 @@ describe("CrowdFund", () => {
         .to.emit(crowdFund, "Claim")
         .withArgs(campaignId);
 
-        // check if claim changes to true
+      // check if claim changes to true
       const campaign = await crowdFund.campaigns(campaignId);
-      assert.equal(campaign.claimed, true, "claimed is false")
+      assert.equal(campaign.claimed, true, "claimed is false");
     });
 
     it("should revert if caller is not fundraiser", async () => {
@@ -467,5 +467,46 @@ describe("CrowdFund", () => {
           parseInt(ethers.utils.formatEther(currentBalance))
       );
     });
+  });
+
+  describe("Withdrawal of tips", () => {
+    let fundraiser;
+    let anotherUser;
+    const campaignId = 0;
+
+    beforeEach(async () => {
+      [fundraiser, anotherUser] = await ethers.getSigners();
+      const category = "Education";
+      const location = "Port Harcourt, Nigeria";
+      const goal = 100;
+      const description = "We need new computers for our computer lab";
+      const blockNumber = await ethers.provider.getBlockNumber();
+      const block = await ethers.provider.getBlock(blockNumber);
+      const startAt = block.timestamp + 10800; // Start after 3 hours
+      const endAt = startAt + 86400; // End after a day
+
+      const amount = 500;
+      const tip = 50;
+
+      await crowdFund
+        .connect(fundraiser)
+        .createCampaign(category, goal, description, startAt, endAt, location);
+
+      await ethers.provider.send("evm_increaseTime", [10800]);
+      await ethers.provider.send("evm_mine");
+
+      await crowdFund
+        .connect(campaignFunder)
+        .fundCampaign(
+          campaignId,
+          ethers.utils.parseEther(amount.toString()),
+          ethers.utils.parseEther(tip.toString())
+        );
+    });
+
+    it('should allow owner withdraw tips', () => {
+      
+    });
+    
   });
 });
