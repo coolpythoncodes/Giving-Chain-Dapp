@@ -205,7 +205,7 @@ describe("CrowdFund", () => {
         .withArgs(campaignId, campaignFunder.address, amount, tip);
 
       // check if total tip is correct
-      const totalTip= await crowdFund.totalTip();
+      const totalTip = await crowdFund.totalTip();
       expect(parseInt(ethers.utils.formatEther(totalTip))).to.equal(tip);
 
       const totalAmountFundedByAddress =
@@ -504,17 +504,125 @@ describe("CrowdFund", () => {
         );
     });
 
-    it('should allow owner withdraw tips', async () => {
-      const prevBalance = await giveChainToken.balanceOf(crowdFund.address)
-      const prevTotalTip = await crowdFund.totalTip()
+    it("should allow owner withdraw tips", async () => {
+      const prevBalance = await giveChainToken.balanceOf(crowdFund.address);
+      const prevTotalTip = await crowdFund.totalTip();
 
-      expect(crowdFund.connect(owner).withdrawTips()).to.emit(crowdFund,"WithdrawTips").withArgs(prevTotalTip)
+      expect(crowdFund.connect(owner).withdrawTips())
+        .to.emit(crowdFund, "WithdrawTips")
+        .withArgs(prevTotalTip);
 
-      const currentTotalTip = await crowdFund.totalTip()
+      const currentTotalTip = await crowdFund.totalTip();
 
-      const currentBalance = await giveChainToken.balanceOf(crowdFund.address)
-      assert.equal(parseInt(ethers.utils.formatEther(currentBalance)), parseInt(ethers.utils.formatEther(prevBalance)) - parseInt(ethers.utils.formatEther(currentTotalTip)), "incorrect token balance")
+      const currentBalance = await giveChainToken.balanceOf(crowdFund.address);
+      assert.equal(
+        parseInt(ethers.utils.formatEther(currentBalance)),
+        parseInt(ethers.utils.formatEther(prevBalance)) -
+          parseInt(ethers.utils.formatEther(currentTotalTip)),
+        "incorrect token balance"
+      );
     });
-    
   });
-});          
+
+  describe("Cancel campaign", () => {
+    beforeEach(async () => {
+      [fundraiser, anotherUser] = await ethers.getSigners();
+      const category = "Education";
+      const location = "Port Harcourt, Nigeria";
+      const goal = 100;
+      const description = "We need new computers for our computer lab";
+      const blockNumber = await ethers.provider.getBlockNumber();
+      const block = await ethers.provider.getBlock(blockNumber);
+      const startAt = block.timestamp + 10800; // Start after 3 hours
+      const endAt = startAt + 86400; // End after a day
+
+      await crowdFund
+        .connect(fundraiser)
+        .createCampaign(category, goal, description, startAt, endAt, location);
+    });
+
+    it("should allow fundraiser cancel campaign when it has not started", async () => {
+      const campaignId = 0;
+
+      expect(crowdFund.connect(fundraiser).cancelCampaign(campaignId))
+        .to.emit(crowdFund, "CancelCampaign")
+        .withArgs(campaignId);
+
+        const campaign = await crowdFund.campaigns(campaignId);
+
+
+      assert.equal(
+        ethers.utils.formatEther(campaign[0]),
+        0,
+        "campaign id is not zero"
+      );
+
+      assert.equal(
+        ethers.utils.formatEther(campaign[1]),
+        0,
+        "startAt  is not zero"
+      );
+
+      assert.equal(
+        ethers.utils.formatEther(campaign[2]),
+        0,
+        "endAt  is not zero"
+      );
+      assert.equal(
+        campaign[3],
+        0,
+        "catergory is not an empty string"
+      );
+
+      assert.equal(
+        campaign[4],
+        "0x0000000000000000000000000000000000000000",
+        "fundraiser is not a zero address"
+      );
+
+      assert.equal(
+        ethers.utils.formatEther(campaign[5]),
+        0,
+        "goal is not zero"
+      );
+
+      assert.equal(
+        ethers.utils.formatEther(campaign[6]),
+        0,
+        "amount raised is not zero"
+      );
+
+      assert.equal(campaign[7], false, "claimed is not false");
+
+      assert.equal(
+        campaign[8],
+        "",
+        "description is not an empty string"
+      );
+
+      assert.equal(
+        campaign[9],
+        "",
+        "location is not an empty string"
+      );
+    });
+
+    it("should revert if caller is not fundraiser", async () => {
+      const campaignId = 0;
+      expect(
+        crowdFund.connect(fundraiser).cancelCampaign(campaignId)
+      ).to.be.revertedWith("caller not fundraiser");
+    });
+
+    it("should revert if campaign has not started", async () => {
+      const campaignId = 0;
+
+      await ethers.provider.send("evm_increaseTime", [10800]);
+      await ethers.provider.send("evm_mine");
+
+      expect(
+        crowdFund.connect(fundraiser).cancelCampaign(campaignId)
+      ).to.be.revertedWith("campaign has started");
+    });
+  });
+});

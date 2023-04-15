@@ -96,5 +96,17 @@ contract CrowdFund is Ownable{
         emit Events.WithdrawTips(totalTip);
     }
 
+    function cancelCampaign(uint _campaignId) external {
+        DataTypes.Campaign memory campaign = campaigns[_campaignId];
+
+        require(msg.sender == campaign.fundraiser,"caller not fundraiser");
+        require(block.timestamp < campaign.startAt, "campaign has started");
+
+        delete campaigns[_campaignId];
+
+        emit Events.CancelCampaign(_campaignId);
+
+    }
+
 
 }

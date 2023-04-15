@@ -24,4 +24,9 @@ library Events {
         event WithdrawTips(
                 uint value
         );
+
+        event CancelCampaign(
+                uint _id
+        );
+
 }
