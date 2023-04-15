@@ -105,7 +105,16 @@ contract CrowdFund is Ownable{
         delete campaigns[_campaignId];
 
         emit Events.CancelCampaign(_campaignId);
+    }
 
+    function getCampaigns() external view returns (DataTypes.Campaign[] memory) {
+        uint campaignCount = campaignId.current();
+        DataTypes.Campaign[] memory  allCampaigns = new DataTypes.Campaign[](campaignCount);
+        for (uint i = 0; i < campaignCount; i++) {
+            DataTypes.Campaign memory currentCampaign = campaigns[i];
+            allCampaigns[i] = currentCampaign;
+        }
+        return allCampaigns;
     }
 
 

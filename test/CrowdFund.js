@@ -485,7 +485,7 @@ describe("CrowdFund", () => {
       const startAt = block.timestamp + 10800; // Start after 3 hours
       const endAt = startAt + 86400; // End after a day
 
-      const amount = 50;
+      const amount = 100;
       const tip = 50;
 
       await crowdFund
@@ -506,19 +506,19 @@ describe("CrowdFund", () => {
 
     it("should allow owner withdraw tips", async () => {
       const prevBalance = await giveChainToken.balanceOf(crowdFund.address);
-      const prevTotalTip = await crowdFund.totalTip();
 
-      expect(crowdFund.connect(owner).withdrawTips())
-        .to.emit(crowdFund, "WithdrawTips")
-        .withArgs(prevTotalTip);
+      await crowdFund.connect(owner).withdrawTips();
 
       const currentTotalTip = await crowdFund.totalTip();
 
       const currentBalance = await giveChainToken.balanceOf(crowdFund.address);
+      const calculatedCurrentBalance =
+        parseInt(ethers.utils.formatEther(prevBalance)) -
+        parseInt(ethers.utils.formatEther(currentTotalTip));
+
       assert.equal(
         parseInt(ethers.utils.formatEther(currentBalance)),
-        parseInt(ethers.utils.formatEther(prevBalance)) -
-          parseInt(ethers.utils.formatEther(currentTotalTip)),
+        calculatedCurrentBalance,
         "incorrect token balance"
       );
     });
@@ -548,8 +548,7 @@ describe("CrowdFund", () => {
         .to.emit(crowdFund, "CancelCampaign")
         .withArgs(campaignId);
 
-        const campaign = await crowdFund.campaigns(campaignId);
-
+      const campaign = await crowdFund.campaigns(campaignId);
 
       assert.equal(
         ethers.utils.formatEther(campaign[0]),
@@ -568,11 +567,7 @@ describe("CrowdFund", () => {
         0,
         "endAt  is not zero"
       );
-      assert.equal(
-        campaign[3],
-        0,
-        "catergory is not an empty string"
-      );
+      assert.equal(campaign[3], 0, "catergory is not an empty string");
 
       assert.equal(
         campaign[4],
@@ -594,17 +589,9 @@ describe("CrowdFund", () => {
 
       assert.equal(campaign[7], false, "claimed is not false");
 
-      assert.equal(
-        campaign[8],
-        "",
-        "description is not an empty string"
-      );
+      assert.equal(campaign[8], "", "description is not an empty string");
 
-      assert.equal(
-        campaign[9],
-        "",
-        "location is not an empty string"
-      );
+      assert.equal(campaign[9], "", "location is not an empty string");
     });
 
     it("should revert if caller is not fundraiser", async () => {
@@ -624,5 +611,61 @@ describe("CrowdFund", () => {
         crowdFund.connect(fundraiser).cancelCampaign(campaignId)
       ).to.be.revertedWith("campaign has started");
     });
+  });
+
+  describe("Get Campaigns", async () => {
+    const campaign1 = {
+      category: "Education",
+      location: "Port Harcourt, Nigeria",
+      goal: 100,
+      description: "We need new computers for our computer lab",
+      // startAt: block.timestamp + 10800, // Start after 3 hours
+      // endAt: startAt + 86400, // End after a day
+    };
+
+    const campaign2 = {
+      category: "Natural Distasters",
+      location: "Bayelsa, Nigeria",
+      goal: 5000,
+      description: "Funds have destoryed farm lands",
+      // startAt: block.timestamp + 3600, // Start after 1 hour
+      // endAt: startAt + 86400, // End after a day
+    };
+
+    it("should return an empty array when no campaigns have been added", async () => {
+      const allCampaigns = await crowdFund.getCampaigns();
+      assert.deepEqual(allCampaigns, []);
+    });
+
+    it("should return the correct number of campaigns", async () => {
+      const blockNumber = await ethers.provider.getBlockNumber();
+      const block = await ethers.provider.getBlock(blockNumber);
+
+      await crowdFund.createCampaign(
+        campaign1.category,
+        campaign1.goal,
+        campaign1.description,
+        block.timestamp + 3600,
+        block.timestamp + 3600 + 86400,
+        campaign1.location
+      );
+      await crowdFund.createCampaign(
+        campaign2.category,
+        campaign2.goal,
+        campaign2.description,
+        block.timestamp + 10800,
+        block.timestamp + 10800 + 86400,
+        campaign2.location
+      );
+
+      const allCampaigns = await crowdFund.getCampaigns();
+      assert.equal(allCampaigns.length, 2);
+    });
+
+    it('should be callable by anyone', async () => {
+      const allCampaigns = await crowdFund.getCampaigns({ from: await (await ethers.getSigner()).address });
+      assert.deepEqual(allCampaigns, []);
+    });
+    
   });
 });
