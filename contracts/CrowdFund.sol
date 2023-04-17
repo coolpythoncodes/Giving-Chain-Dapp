@@ -117,5 +117,10 @@ contract CrowdFund is Ownable{
         return allCampaigns;
     }
 
+    function getDonors(uint _campaignId)  external view returns (DataTypes.Donor[] memory) {
+        DataTypes.Donor[] memory donors = donorsByCampaignId[_campaignId];
+        return donors;
+    }
+
 
 }

@@ -662,10 +662,127 @@ describe("CrowdFund", () => {
       assert.equal(allCampaigns.length, 2);
     });
 
-    it('should be callable by anyone', async () => {
-      const allCampaigns = await crowdFund.getCampaigns({ from: await (await ethers.getSigner()).address });
+    it("should be callable by anyone", async () => {
+      const allCampaigns = await crowdFund.getCampaigns({
+        from: await (await ethers.getSigner()).address,
+      });
       assert.deepEqual(allCampaigns, []);
     });
+  });
+
+  describe("Get donors of a campaign", () => {
+    const campaignId = 0;
+
+    const amount1 = 100;
+    const amount2 = 200;
+    const amount3 = 300;
+    const tip = 50;
+
+    beforeEach(async () => {
+      [fundraiser, donor1, donor2, donor3] = await ethers.getSigners();
+
+      // mint 10,000 tokens to donors
+      await giveChainToken.connect(donor1).mint();
+      await giveChainToken.connect(donor2).mint();
+      await giveChainToken.connect(donor3).mint();
+
+      // approve CrowdFund to spend campaignFunder tokens
+      await giveChainToken
+        .connect(donor1)
+        .approve(crowdFund.address, ethers.utils.parseEther("5000"));
+
+      await giveChainToken
+        .connect(donor2)
+        .approve(crowdFund.address, ethers.utils.parseEther("5000"));
+
+      await giveChainToken
+        .connect(donor3)
+        .approve(crowdFund.address, ethers.utils.parseEther("5000"));
+
+      const blockNumber = await ethers.provider.getBlockNumber();
+      const block = await ethers.provider.getBlock(blockNumber);
+      const _startAt = block.timestamp + 10800;
+
+      const campaign = {
+        category: "Education",
+        location: "Port Harcourt, Nigeria",
+        goal: 100,
+        description: "We need new computers for our computer lab",
+        startAt: _startAt, // Start after 3 hours
+        endAt: _startAt + 86400, // End after a day
+      };
+
+      await crowdFund.createCampaign(
+        campaign.category,
+        campaign.goal,
+        campaign.description,
+        campaign.startAt,
+        campaign.endAt,
+        campaign.location
+      );
+
+      await crowdFund.createCampaign(
+        campaign.category,
+        campaign.goal,
+        campaign.description,
+        campaign.startAt,
+        campaign.endAt,
+        campaign.location
+      );
+
+      await ethers.provider.send("evm_increaseTime", [10800]);
+      await ethers.provider.send("evm_mine");
+
+      await crowdFund
+        .connect(donor1)
+        .fundCampaign(
+          campaignId,
+          ethers.utils.parseEther(amount1.toString()),
+          ethers.utils.parseEther(tip.toString())
+        );
+
+      await crowdFund
+        .connect(donor2)
+        .fundCampaign(
+          campaignId,
+          ethers.utils.parseEther(amount2.toString()),
+          ethers.utils.parseEther(tip.toString())
+        );
+
+      await crowdFund
+        .connect(donor3)
+        .fundCampaign(
+          campaignId,
+          ethers.utils.parseEther(amount3.toString()),
+          ethers.utils.parseEther(tip.toString())
+        );
+    });
+
+    it("should return an empty array when a campaign has no donors", async () => {
+      const campaignId1 = 1;
+
+      const donors = await crowdFund.getDonors(campaignId1);
+      assert.deepEqual(donors, []);
+    });
+
+    it('should return the correct values of the donor array', async() => {
+      const donors = await crowdFund.getDonors(campaignId);
+
+      assert.equal(ethers.utils.formatEther(donors[0][0]), amount1)
+      assert.equal(donors[0][2], donor1.address)
+    });
     
+
+    it("should return the correct number of donors for a campaign", async () => {
+      const donors = await crowdFund.getDonors(campaignId);
+      assert.equal(donors.length, 3);
+    });
+
+    it("should be callable by anyone", async () => {
+      const donors = await crowdFund.getDonors(campaignId, {
+        from: await (await ethers.getSigner()).address,
+      });
+      assert.equal(donors.length, 3);
+    });
   });
 });
