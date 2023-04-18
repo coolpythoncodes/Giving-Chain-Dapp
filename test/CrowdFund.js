@@ -6,7 +6,7 @@ describe("CrowdFund", () => {
   let giveChainToken;
   let owner;
   let campaignFunder;
-  const campaignUrl = "https://www.gofundme.com/"
+  const campaignImageUrl = "https://www.gofundme.com/"
 
 
   beforeEach(async () => {
@@ -46,14 +46,14 @@ describe("CrowdFund", () => {
 
       await crowdFund
         .connect(addr1)
-        .createCampaign(category, goal, description, startAt, endAt, location, campaignUrl);
+        .createCampaign(category, goal, description, startAt, endAt, location, campaignImageUrl);
       const campaign = await crowdFund.connect(addr1).campaigns(campaignId);
 
       expect(campaign.category).to.equal(category);
       expect(campaign.location).to.equal(location);
       expect(campaign.goal).to.equal(goal);
       expect(campaign.description).to.equal(description);
-      expect(campaign.campaignUrl).to.equal(campaignUrl);
+      expect(campaign.campaignImageUrl).to.equal(campaignImageUrl);
       expect(campaign.startAt).to.equal(startAt);
       expect(campaign.endAt).to.equal(endAt);
       expect(campaign.fundraiser).to.equal(addr1.address);
@@ -66,7 +66,7 @@ describe("CrowdFund", () => {
       expect(
         await crowdFund
           .connect(addr1)
-          .createCampaign(category, goal, description, startAt, endAt, location, campaignUrl)
+          .createCampaign(category, goal, description, startAt, endAt, location, campaignImageUrl)
       )
         .to.emit(crowdFund, "CreateCampaign")
         .withArgs(campaignId, addr1.address, goal, startAt, endAt);
@@ -176,7 +176,7 @@ describe("CrowdFund", () => {
         startAt,
         endAt,
         location,
-        campaignUrl
+        campaignImageUrl
       );
 
       await ethers.provider.send("evm_increaseTime", [3600]);
@@ -252,7 +252,7 @@ describe("CrowdFund", () => {
         startAt,
         endAt,
         location,
-        campaignUrl
+        campaignImageUrl
       );
 
       await ethers.provider.send("evm_increaseTime", [7200]);
@@ -290,7 +290,7 @@ describe("CrowdFund", () => {
         startAt,
         endAt,
         location,
-        campaignUrl
+        campaignImageUrl
       );
 
       await ethers.provider.send("evm_increaseTime", [10800]);
@@ -328,11 +328,8 @@ describe("CrowdFund", () => {
         startAt,
         endAt,
         location,
-        campaignUrl
+        campaignImageUrl
       );
-
-      // await ethers.provider.send("evm_increaseTime", [10800]);
-      // await ethers.provider.send("evm_mine");
 
       expect(
         crowdFund
@@ -366,7 +363,7 @@ describe("CrowdFund", () => {
         startAt,
         endAt,
         location,
-        campaignUrl
+        campaignImageUrl
       );
 
       await ethers.provider.send("evm_increaseTime", [172800]);
@@ -402,7 +399,7 @@ describe("CrowdFund", () => {
 
       await crowdFund
         .connect(fundraiser)
-        .createCampaign(category, goal, description, startAt, endAt, location, campaignUrl);
+        .createCampaign(category, goal, description, startAt, endAt, location, campaignImageUrl);
     });
 
     it("should allow fundraiser to claim funds", async () => {
@@ -497,7 +494,7 @@ describe("CrowdFund", () => {
 
       await crowdFund
         .connect(fundraiser)
-        .createCampaign(category, goal, description, startAt, endAt, location, campaignUrl);
+        .createCampaign(category, goal, description, startAt, endAt, location, campaignImageUrl);
 
       await ethers.provider.send("evm_increaseTime", [10800]);
       await ethers.provider.send("evm_mine");
@@ -545,7 +542,7 @@ describe("CrowdFund", () => {
 
       await crowdFund
         .connect(fundraiser)
-        .createCampaign(category, goal, description, startAt, endAt, location, campaignUrl);
+        .createCampaign(category, goal, description, startAt, endAt, location, campaignImageUrl);
     });
 
     it("should allow fundraiser cancel campaign when it has not started", async () => {
@@ -655,7 +652,7 @@ describe("CrowdFund", () => {
         block.timestamp + 3600,
         block.timestamp + 3600 + 86400,
         campaign1.location,
-        campaignUrl
+        campaignImageUrl
       );
       await crowdFund.createCampaign(
         campaign2.category,
@@ -664,7 +661,7 @@ describe("CrowdFund", () => {
         block.timestamp + 10800,
         block.timestamp + 10800 + 86400,
         campaign2.location,
-        campaignUrl
+        campaignImageUrl
       );
 
       const allCampaigns = await crowdFund.getCampaigns();
@@ -719,7 +716,7 @@ describe("CrowdFund", () => {
         description: "We need new computers for our computer lab",
         startAt: _startAt, // Start after 3 hours
         endAt: _startAt + 86400, // End after a day
-        campaignUrl
+        campaignImageUrl
       };
 
       await crowdFund.createCampaign(
@@ -729,7 +726,7 @@ describe("CrowdFund", () => {
         campaign.startAt,
         campaign.endAt,
         campaign.location,
-        campaign.campaignUrl
+        campaign.campaignImageUrl
       );
 
       await crowdFund.createCampaign(
@@ -739,7 +736,7 @@ describe("CrowdFund", () => {
         campaign.startAt,
         campaign.endAt,
         campaign.location,
-        campaign.campaignUrl
+        campaign.campaignImageUrl
       );
 
       await ethers.provider.send("evm_increaseTime", [10800]);
@@ -818,7 +815,7 @@ describe("CrowdFund", () => {
         description: "We need new computers for our computer lab",
         startAt: _startAt, // Start after 3 hours
         endAt: _startAt + 86400, // End after a day
-        campaignUrl: campaignUrl,
+        campaignImageUrl: campaignImageUrl,
       };
 
       await crowdFund.connect(fundraiser).createCampaign(
@@ -828,7 +825,7 @@ describe("CrowdFund", () => {
         campaign.startAt,
         campaign.endAt,
         campaign.location,
-        campaign.campaignUrl
+        campaign.campaignImageUrl
       );
 
     })
@@ -857,11 +854,6 @@ describe("CrowdFund", () => {
       await ethers.provider.send("evm_increaseTime", [10800 + 87400]);
       await ethers.provider.send("evm_mine");
 
-      // await crowdFund.connect(fundraiser).createCampaignUpdate(
-      //   campaignId,
-      //   description
-      // )
-
       expect(crowdFund.connect(fundraiser).createCampaignUpdate(
         campaignId,
         description
@@ -886,4 +878,55 @@ describe("CrowdFund", () => {
     });
 
   })
+
+  describe('Get Campaign update', () => {
+    let fundraiser
+    let anotherUser
+    const description = "goal has been reached"
+    const campaignId = 0
+
+    beforeEach(async () => {
+      [fundraiser, anotherUser] = await ethers.getSigners()
+      const blockNumber = await ethers.provider.getBlockNumber();
+      const block = await ethers.provider.getBlock(blockNumber);
+
+      const _startAt = block.timestamp + 10800
+
+      const campaign = {
+        category: "Education",
+        location: "Port Harcourt, Nigeria",
+        goal: 100,
+        description: "We need new computers for our computer lab",
+        startAt: _startAt, // Start after 3 hours
+        endAt: _startAt + 86400, // End after a day
+        campaignImageUrl: campaignImageUrl,
+      };
+
+      await crowdFund.connect(fundraiser).createCampaign(
+        campaign.category,
+        campaign.goal,
+        campaign.description,
+        campaign.startAt,
+        campaign.endAt,
+        campaign.location,
+        campaign.campaignImageUrl
+      );
+
+    })
+
+    it('should return the correct number of campaign update', async () => {
+      await ethers.provider.send("evm_increaseTime", [10800]);
+      await ethers.provider.send("evm_mine");
+
+      await crowdFund.connect(fundraiser).createCampaignUpdate(
+        campaignId,
+        description
+      )
+
+      const update = await crowdFund.getCampaignUpdate(campaignId)
+      expect(update.length).to.equal(1)
+    });
+
+  });
+
 });
