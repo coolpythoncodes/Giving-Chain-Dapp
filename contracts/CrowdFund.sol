@@ -122,5 +122,22 @@ contract CrowdFund is Ownable{
         return donors;
     }
 
+    function createCampaignUpdate(uint _campaignId, string calldata _description) external {
+        DataTypes.Campaign memory campaign = campaigns[_campaignId];
+
+        require(msg.sender == campaign.fundraiser,"caller not fund raiser");
+        require(campaign.startAt <= block.timestamp, "Campaign has not started");
+        require(campaign.endAt >= block.timestamp, "Campaign has ended");
+
+         DataTypes.CampaignUpdate[] storage campaignUpdate = campaignUpdates[_campaignId];
+
+         campaignUpdate.push(DataTypes.CampaignUpdate({
+            description: _description,
+            timestamp: block.timestamp
+        }));
+
+        emit Events.CreateCampaignUpdate(_campaignId);
+    }
+
 
 }

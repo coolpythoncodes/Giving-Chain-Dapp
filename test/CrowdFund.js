@@ -464,7 +464,7 @@ describe("CrowdFund", () => {
       const currentBalance = await giveChainToken.balanceOf(fundraiser.address);
       expect(parseInt(ethers.utils.formatEther(currentBalance))).to.equal(
         parseInt(ethers.utils.formatEther(previousBalance)) +
-          parseInt(ethers.utils.formatEther(currentBalance))
+        parseInt(ethers.utils.formatEther(currentBalance))
       );
     });
   });
@@ -765,13 +765,13 @@ describe("CrowdFund", () => {
       assert.deepEqual(donors, []);
     });
 
-    it('should return the correct values of the donor array', async() => {
+    it('should return the correct values of the donor array', async () => {
       const donors = await crowdFund.getDonors(campaignId);
 
       assert.equal(ethers.utils.formatEther(donors[0][0]), amount1)
       assert.equal(donors[0][2], donor1.address)
     });
-    
+
 
     it("should return the correct number of donors for a campaign", async () => {
       const donors = await crowdFund.getDonors(campaignId);
@@ -785,4 +785,91 @@ describe("CrowdFund", () => {
       assert.equal(donors.length, 3);
     });
   });
+
+  describe('Create Campaign Update', () => {
+    let fundraiser
+    let anotherUser
+    const description = "goal has been reached"
+    const campaignId = 0
+
+    beforeEach(async () => {
+      [fundraiser, anotherUser] = await ethers.getSigners()
+      const blockNumber = await ethers.provider.getBlockNumber();
+      const block = await ethers.provider.getBlock(blockNumber);
+
+      const _startAt = block.timestamp + 10800
+
+      const campaign = {
+        category: "Education",
+        location: "Port Harcourt, Nigeria",
+        goal: 100,
+        description: "We need new computers for our computer lab",
+        startAt: _startAt, // Start after 3 hours
+        endAt: _startAt + 86400, // End after a day
+      };
+
+      await crowdFund.connect(fundraiser).createCampaign(
+        campaign.category,
+        campaign.goal,
+        campaign.description,
+        campaign.startAt,
+        campaign.endAt,
+        campaign.location
+      );
+
+    })
+
+    it('should revert if caller is not fundraiser', async () => {
+
+      await ethers.provider.send("evm_increaseTime", [10800]);
+      await ethers.provider.send("evm_mine");
+
+      expect(crowdFund.connect(anotherUser).createCampaignUpdate(
+        campaignId,
+        description
+      )).to.be.revertedWith("caller not fund raiser")
+    });
+
+    it('should revert if campaign has not started', async () => {
+
+      expect(crowdFund.connect(fundraiser).createCampaignUpdate(
+        campaignId,
+        description
+      )).to.be.revertedWith("Campaign has not started")
+    });
+
+    it('should revert if campaign has ended', async () => {
+
+      await ethers.provider.send("evm_increaseTime", [10800 + 87400]);
+      await ethers.provider.send("evm_mine");
+
+      // await crowdFund.connect(fundraiser).createCampaignUpdate(
+      //   campaignId,
+      //   description
+      // )
+
+      expect(crowdFund.connect(fundraiser).createCampaignUpdate(
+        campaignId,
+        description
+      )).to.be.revertedWith("Campaign has ended")
+    });
+
+    it('should create campaign update', async () => {
+      await ethers.provider.send("evm_increaseTime", [10800]);
+      await ethers.provider.send("evm_mine");
+
+      const tx = await crowdFund.connect(fundraiser).createCampaignUpdate(
+        campaignId,
+        description
+      )
+
+      // Verify that the event was emitted with the correct arguments
+      expect(tx).to.emit(crowdFund, "CreateCampaignUpdate").withArgs(campaignId)
+
+      // Verify that the campaign update was created with the correct values
+      const _campaignUpdate = await crowdFund.campaignUpdates(campaignId, 0)
+      assert.equal(_campaignUpdate[0], description)
+    });
+
+  })
 });

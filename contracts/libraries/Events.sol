@@ -26,7 +26,9 @@ library Events {
         );
 
         event CancelCampaign(
-                uint _id
+                uint indexed _id
         );
+
+        event CreateCampaignUpdate(uint indexed CreateCampaignUpdate);
 
 }
