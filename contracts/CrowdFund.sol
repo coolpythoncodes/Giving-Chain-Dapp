@@ -29,7 +29,7 @@ contract CrowdFund is Ownable{
         token = IERC20(_address);
     }
 
-    function createCampaign(string calldata _category, uint _goal,string calldata _description, uint _startAt, uint _endAt, string calldata _location ) external  {
+    function createCampaign(string calldata _category, uint _goal,string calldata _description, uint _startAt, uint _endAt, string calldata _location, string calldata _campaignUrl ) external  {
         require(_goal >= 0, "goal can't be zero");
         require(_startAt >= block.timestamp,"start time in past");
         require(_endAt > _startAt, "end at is before start time");
@@ -46,7 +46,8 @@ contract CrowdFund is Ownable{
             amountRaised: 0,
             claimed: false,
             description: _description,
-            location: _location
+            location: _location,
+            campaignUrl: _campaignUrl
         });
 
         campaignId.increment();
@@ -137,6 +138,11 @@ contract CrowdFund is Ownable{
         }));
 
         emit Events.CreateCampaignUpdate(_campaignId);
+    }
+
+    function getCampaignUpdate(uint _campaignId) external view  returns (DataTypes.CampaignUpdate[] memory) {
+        DataTypes.CampaignUpdate[] memory updates = campaignUpdates[_campaignId];
+        return updates;
     }
 
 

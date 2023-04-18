@@ -18,6 +18,7 @@ library DataTypes {
         bool claimed;
         string description;
         string location;
+        string campaignUrl;
     }
 
     struct WordsOfSupport {
