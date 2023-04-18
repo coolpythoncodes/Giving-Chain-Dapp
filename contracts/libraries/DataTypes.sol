@@ -21,9 +21,8 @@ library DataTypes {
     }
 
     struct WordsOfSupport {
-        uint campaignId;
         string supportWord;
-
+        uint timestamp;
     }
 
     struct Donor{

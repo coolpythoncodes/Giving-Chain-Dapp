@@ -26,7 +26,10 @@ library Events {
         );
 
         event CancelCampaign(
-                uint _id
+                uint indexed _id
+        );
+        event CreateWordOfSupport(
+                uint indexed _id
         );
 
 }

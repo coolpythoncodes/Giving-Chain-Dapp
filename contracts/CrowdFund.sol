@@ -8,6 +8,21 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import {Events} from "./libraries/Events.sol";
 import {DataTypes} from "./libraries/DataTypes.sol";
 import {Constants} from "./libraries/Constants.sol";
+import {
+    ErrGoalZero,
+    ErrStartAtInPast,
+    ErrEndAtBeforeStartAt,
+    ErrExceedMaxRaisedDuration,
+    ErrCampaignHasNotStarted,
+    ErrCampaignHasEnded,
+    ErrAmountZero,
+    ErrInsufficientTokenBalance,
+    ErrClaimed,
+    ErrCallerNotFundRaiser,
+    ErrCampaignHasNotEnded,
+    ErrCallerNotOwner,
+    ErrCallerNotDonor
+    } from "./libraries/Error.sol";
 
 contract CrowdFund is Ownable{
     using Counters for Counters.Counter;
@@ -16,8 +31,6 @@ contract CrowdFund is Ownable{
     Counters.Counter public campaignId;
 
     uint public totalTip;
-
-
 
     mapping (uint => DataTypes.Campaign) public campaigns;
     mapping (uint => DataTypes.WordsOfSupport[]) public wordsOfSupport;
@@ -30,10 +43,18 @@ contract CrowdFund is Ownable{
     }
 
     function createCampaign(string calldata _category, uint _goal,string calldata _description, uint _startAt, uint _endAt, string calldata _location ) external  {
-        require(_goal >= 0, "goal can't be zero");
-        require(_startAt >= block.timestamp,"start time in past");
-        require(_endAt > _startAt, "end at is before start time");
-        require(_endAt <= block.timestamp + Constants.MAX_RAISE_DURATION,"end at exceeds max raise duration");
+
+        // check if goal of campaign is zero
+        if (_goal <= 0) revert ErrGoalZero();
+
+        // check if startAt of campaign is in past
+        if (_startAt <= block.timestamp) revert ErrStartAtInPast();
+
+        // check if endAt is before startAt
+        if(_endAt < _startAt) revert ErrEndAtBeforeStartAt();
+
+        // check if endAt exceed max raise duration
+        if (_endAt >= block.timestamp + Constants.MAX_RAISE_DURATION) revert ErrExceedMaxRaisedDuration();
 
         uint newCampaignId = campaignId.current();
         campaigns[newCampaignId] = DataTypes.Campaign({
@@ -55,12 +76,19 @@ contract CrowdFund is Ownable{
 
     function fundCampaign(uint _campaignId, uint _amount, uint tip)  external {
         DataTypes.Campaign storage campaign = campaigns[_campaignId];
-        require(campaign.startAt <= block.timestamp, "Campaign has not started");
-        require(campaign.endAt >= block.timestamp, "Campaign has ended");
-        require(_amount > 0, "amount should not be zero");
-        require(token.balanceOf(msg.sender) >= _amount, "Insufficient balance");
 
-        
+        // check if campaign has started
+        if (campaign.startAt >= block.timestamp) revert ErrCampaignHasNotStarted();
+
+        // check if campaign has ended
+        if (campaign.endAt <= block.timestamp) revert ErrCampaignHasEnded();
+
+        // check if fund amount is zero
+        if(_amount <= 0) revert ErrAmountZero();
+
+        // check if caller balance is sufficient
+        if(token.balanceOf(msg.sender) <= _amount) revert ErrInsufficientTokenBalance();
+
         campaign.amountRaised += _amount;
         amountFundedByCampaignId[_campaignId][msg.sender] += _amount;
         totalTip += tip;
@@ -78,9 +106,14 @@ contract CrowdFund is Ownable{
     function claim(uint _campaignId)  external {
         DataTypes.Campaign storage campaign = campaigns[_campaignId];
 
-        require(msg.sender == campaign.fundraiser, "caller not fundraiser");
-        require(block.timestamp > campaign.endAt, "campaign has not ended");
-        require(!campaign.claimed, 'claimed');
+        // check if msg.sender is caller
+        if (msg.sender != campaign.fundraiser) revert ErrCallerNotFundRaiser();
+        
+         // check if campaign has not ended
+        if (block.timestamp < campaign.endAt  ) revert ErrCampaignHasNotEnded();
+        
+        // check if funded amount has been claimed
+        if(campaign.claimed) revert ErrClaimed();
 
         campaign.claimed = true;
 
@@ -90,7 +123,7 @@ contract CrowdFund is Ownable{
     }
 
     function withdrawTips() external onlyOwner {
-        require(owner() == msg.sender,"caller not owner");
+        if(owner() != msg.sender) revert ErrCallerNotOwner();
         token.safeTransfer(msg.sender,totalTip);
 
         emit Events.WithdrawTips(totalTip);
@@ -99,8 +132,11 @@ contract CrowdFund is Ownable{
     function cancelCampaign(uint _campaignId) external {
         DataTypes.Campaign memory campaign = campaigns[_campaignId];
 
-        require(msg.sender == campaign.fundraiser,"caller not fundraiser");
-        require(block.timestamp < campaign.startAt, "campaign has started");
+        // check if msg.sender is caller
+        if (msg.sender != campaign.fundraiser) revert ErrCallerNotFundRaiser();
+
+        // check if campaign has started
+        if (block.timestamp > campaign.startAt) revert ErrCampaignHasNotStarted();
 
         delete campaigns[_campaignId];
 
@@ -122,5 +158,41 @@ contract CrowdFund is Ownable{
         return donors;
     }
 
+    function createWordOfSupport(uint _campaignId, string calldata _supportWord) external {
+            DataTypes.Campaign memory campaign = campaigns[_campaignId];
+
+        // check if campaign has started
+        if (campaign.startAt >= block.timestamp) revert ErrCampaignHasNotStarted();
+
+        // check if campaign has ended
+        if (campaign.endAt <= block.timestamp) revert ErrCampaignHasEnded();
+
+            
+        // check if caller has donated to a campaign
+        if(!containsDonor(_campaignId, msg.sender)) revert ErrCallerNotDonor();
+ 
+ 
+        wordsOfSupport[_campaignId].push(DataTypes.WordsOfSupport({
+            supportWord: _supportWord,
+            timestamp: block.timestamp
+        }));
+
+        emit Events.CreateWordOfSupport(_campaignId);
+
+    }
+
+    function getWordsOfSupport(uint _campaignId) external view returns (DataTypes.WordsOfSupport[] memory) {
+        return wordsOfSupport[_campaignId];
+    }
+
+    function containsDonor(uint _campaignId, address _donorAddress) private view returns (bool) {
+        DataTypes.Donor[] memory donors = donorsByCampaignId[_campaignId];
+        for (uint i = 0; i < donors.length; i++) {
+            if (donors[i].donorAddress == _donorAddress ) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
