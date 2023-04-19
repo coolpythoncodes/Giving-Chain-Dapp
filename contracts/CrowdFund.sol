@@ -42,7 +42,7 @@ contract CrowdFund is Ownable{
         token = IERC20(_address);
     }
 
-    function createCampaign(string calldata _category, uint _goal,string calldata _description, uint _startAt, uint _endAt, string calldata _location ) external  {
+    function createCampaign(string calldata _category, uint _goal,string calldata _description, uint _startAt, uint _endAt, string calldata _location,string calldata _campaignImageUrl ) external  {
 
         // check if goal of campaign is zero
         if (_goal <= 0) revert ErrGoalZero();
@@ -67,7 +67,8 @@ contract CrowdFund is Ownable{
             amountRaised: 0,
             claimed: false,
             description: _description,
-            location: _location
+            location: _location,
+            campaignImageUrl: _campaignImageUrl
         });
 
         campaignId.increment();
@@ -156,6 +157,35 @@ contract CrowdFund is Ownable{
     function getDonors(uint _campaignId)  external view returns (DataTypes.Donor[] memory) {
         DataTypes.Donor[] memory donors = donorsByCampaignId[_campaignId];
         return donors;
+    }
+
+    function createCampaignUpdate(uint _campaignId, string calldata _description) external {
+        DataTypes.Campaign memory campaign = campaigns[_campaignId];
+
+
+        // check if msg.sender is caller
+        if (msg.sender != campaign.fundraiser) revert ErrCallerNotFundRaiser();
+
+        // check if campaign has started
+        if (campaign.startAt >= block.timestamp) revert ErrCampaignHasNotStarted();
+
+        // check if campaign has ended
+        if (campaign.endAt <= block.timestamp) revert ErrCampaignHasEnded();
+
+
+         DataTypes.CampaignUpdate[] storage campaignUpdate = campaignUpdates[_campaignId];
+
+         campaignUpdate.push(DataTypes.CampaignUpdate({
+            description: _description,
+            timestamp: block.timestamp
+        }));
+
+        emit Events.CreateCampaignUpdate(_campaignId);
+    }
+
+    function getCampaignUpdate(uint _campaignId) external view  returns (DataTypes.CampaignUpdate[] memory) {
+        DataTypes.CampaignUpdate[] memory updates = campaignUpdates[_campaignId];
+        return updates;
     }
 
     function createWordOfSupport(uint _campaignId, string calldata _supportWord) external {

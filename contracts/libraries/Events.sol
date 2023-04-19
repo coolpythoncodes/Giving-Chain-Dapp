@@ -32,4 +32,6 @@ library Events {
                 uint indexed _id
         );
 
+        event CreateCampaignUpdate(uint indexed CreateCampaignUpdate);
+
 }
