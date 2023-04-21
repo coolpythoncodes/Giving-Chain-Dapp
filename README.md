@@ -1,28 +1,71 @@
-# Create T3 App
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+<!-- PROJECT SHIELDS -->
+<!--
+*** I'm using markdown "reference style" links for readability.
+*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
+*** See the bottom of this document for the declaration of the reference variables
+*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
+*** https://www.markdownguide.org/basic-syntax/#reference-style-links
+-->
 
-## What's next? How do I make an app with this?
+![](https://img.shields.io/badge/Hackathon-blueviolet)
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+[![Contributors][contributors-shield]][contributors-url]
+[![GitHub issues][issues-shield]][issues-url]
+[![GitHub forks][forks-shield]][forks-url]
+[![GitHub stars][star-shield]][star-url]
+[![GitHub license][license-shield]][license-url]
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
 
-## Learn More
+# Giving Chain 
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+> A decentralized crowdfunding and charity Dapp on BNB chain
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+#### **N/B**: All PRs should be made to the [staging](https://github.com/coolpythoncodes/Giving-Chain-Dapp/tree/staging) branch
 
-## How do I deploy this?
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+This project was bootstrapped with [`create-t3-app`](https://create.t3.gg/).
+
+## Technology Stack & Tools
+
+- React
+- NextJS
+- Hardhat
+
+
+### Install
+```bash
+git clone https://github.com/coolpythoncodes/Giving-Chain-Dapp
+cd Giving-Chain-Dapp
+yarn install
+
+#Get your web development server running.
+yarn start
+```
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome!
+
+Feel free to check the [issues page](../../issues/).
+
+## Show your support
+
+Give a ⭐ if you like this project!
+
+## Useful links
+
+-[BNB Faucet](https://testnet.bnbchain.org/faucet-smart)
+
+[contributors-shield]: https://img.shields.io/github/contributors/coolpythoncodes/Giving-Chain-Dapp?style=for-the-badge
+[contributors-url]: https://github.com/coolpythoncodes/Giving-Chain-Dapp/graphs/contributors
+[issues-shield]: https://img.shields.io/github/issues/coolpythoncodes/Giving-Chain-Dapp?style=for-the-badge
+[issues-url]: https://github.com/coolpythoncodes/Giving-Chain-Dapp/issues
+[forks-shield]: https://img.shields.io/github/forks/coolpythoncodes/Giving-Chain-Dapp?style=for-the-badge
+[forks-url]: https://github.com/coolpythoncodes/Giving-Chain-Dapp/network
+[star-shield]: https://img.shields.io/github/stars/coolpythoncodes/Giving-Chain-Dapp?style=for-the-badge
+[star-url]: https://github.com/coolpythoncodes/Giving-Chain-Dapp/stargazers
+[license-shield]: https://img.shields.io/github/license/coolpythoncodes/Giving-Chain-Dapp?style=for-the-badge
+[license-url]: https://github.com/coolpythoncodes/Giving-Chain-Dapp/blob/main/LICENSE.md
