@@ -33,13 +33,20 @@ This project was bootstrapped with [`create-t3-app`](https://create.t3.gg/).
 - React
 - NextJS
 - Hardhat
+- Particle network for social login authentication and wallet functionalities
 
 
 ### Install
 ```bash
 git clone https://github.com/coolpythoncodes/Giving-Chain-Dapp
-cd Giving-Chain-Dapp
+
 yarn install
+
+# create a particle network project from https://dashboard.particle.network/#/project/all 
+# to get PROJECT_ID, CLIENT_KEY, and APP_ID
+
+- Copy `.env.example` to a new `.env.local` file on Giving-Chain-Dapp root folder
+cd Giving-Chain-Dapp
 
 #Get your web development server running.
 yarn start
@@ -57,7 +64,8 @@ Give a ⭐ if you like this project!
 
 ## Useful links
 
--[BNB Faucet](https://testnet.bnbchain.org/faucet-smart)
+- [BNB Faucet](https://testnet.bnbchain.org/faucet-smart)
+- [Particle network](https://particle.network/)
 
 [contributors-shield]: https://img.shields.io/github/contributors/coolpythoncodes/Giving-Chain-Dapp?style=for-the-badge
 [contributors-url]: https://github.com/coolpythoncodes/Giving-Chain-Dapp/graphs/contributors

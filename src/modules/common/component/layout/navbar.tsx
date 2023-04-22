@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { navlinks } from "~/utils/data";
+import { ConnectButton } from "@particle-network/connect-react-ui";
+import "@particle-network/connect-react-ui/dist/index.css";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -24,7 +26,7 @@ const Navbar = () => {
       }`}
     >
       <div className="layout-container flex h-12 items-center justify-between md:h-20">
-      <Link
+        <Link
           href="/"
           className={`font-space text-base font-bold leading-[41px] md:text-[32px] ${
             router.pathname === "/" ? "text-white" : "text-black"
@@ -45,9 +47,10 @@ const Navbar = () => {
               </li>
             ))}
           </ul>
-          <Button className="border-none bg-[#FF6B00] text-white">
+          <ConnectButton />
+          {/* <Button className="border-none bg-[#FF6B00] text-white">
             Connect wallet
-          </Button>
+          </Button> */}
         </div>
         <MenuOutlined
           onClick={showDrawer}
