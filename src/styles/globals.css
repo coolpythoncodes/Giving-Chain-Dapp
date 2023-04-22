@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .layout-container {
+    @apply mx-auto  w-11/12 max-w-screen-2xl;
+  }
+
+  .error {
+    @apply border border-red-500;
+  }
+}
