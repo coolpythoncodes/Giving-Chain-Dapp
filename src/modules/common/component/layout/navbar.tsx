@@ -1,5 +1,5 @@
 import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
-import { Button, Drawer } from "antd";
+import { Drawer } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -77,9 +77,7 @@ const Navbar = () => {
             </li>
           ))}
         </ul>
-        <Button className="border-none bg-[#FF6B00] text-white">
-          Connect wallet
-        </Button>
+        <ConnectButton />
       </Drawer>
     </nav>
   );
