@@ -22,7 +22,7 @@ const Navbar = () => {
   return (
     <nav
       className={`font-space ${
-        router.pathname === "/" ? "bg-[#190E0A]" : "bg-white"
+        router.pathname === "/" ? "bg-[#190E0A]" : "bg-[#F5F5F5]"
       }`}
     >
       <div className="layout-container flex h-12 items-center justify-between md:h-20">
@@ -40,7 +40,9 @@ const Navbar = () => {
               <li key={`navlinks-${index}`}>
                 <Link
                   href={item.to}
-                  className="text-base font-normal capitalize text-white"
+                  className={`text-base font-normal capitalize  ${
+                    router.pathname === "/" ? "text-white" : "text-black"
+                  }`}
                 >
                   {item.name}
                 </Link>

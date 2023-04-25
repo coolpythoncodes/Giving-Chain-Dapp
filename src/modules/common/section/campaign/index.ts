@@ -1,0 +1,1 @@
+export {default as YourCampaign} from "./your-campaign"
