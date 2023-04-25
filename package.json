@@ -8,7 +8,9 @@
     "lint": "next lint",
     "start": "next start",
     "test": "npx hardhat test",
-    "gas": "REPORT_GAS=true npx hardhat test"
+    "gas": "REPORT_GAS=true npx hardhat test",
+    "run-node":"npx hardhat node",
+    "deploy-local": "npx hardhat run ./scripts/deploy.js --network localhost"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.8.2",

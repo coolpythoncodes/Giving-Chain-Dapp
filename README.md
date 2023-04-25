@@ -20,7 +20,6 @@
 
 # Giving Chain 
 
-
 > A decentralized crowdfunding and charity Dapp on BNB chain
 
 #### **N/B**: All PRs should be made to the [staging](https://github.com/coolpythoncodes/Giving-Chain-Dapp/tree/staging) branch
@@ -50,6 +49,13 @@ cd Giving-Chain-Dapp
 
 #Get your web development server running.
 yarn start
+
+#start hardhat node
+yarn run-node
+
+# run local deployment script in a separate terminal
+yarn run-deploy-local
+
 ```
 
 ## 🤝 Contributing
