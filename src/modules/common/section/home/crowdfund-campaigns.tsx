@@ -1,0 +1,35 @@
+import { useEffect, useState } from "react";
+import { CampaignCard } from "../../component/cards";
+import { Carousel } from "antd";
+import Link from "next/link";
+import { generalRoutes } from "../../utils/data/routes.data";
+import { useContractContext } from "~/context/ContractContext";
+
+const CrowdfundCampaigns = () => {
+  const [campaigns, setCampaigns] = useState([]);
+  const { getCampaign } = useContractContext();
+
+  useEffect(() => {
+    getCampaign().then((res) => setCampaigns(res)) as unknown;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  console.log(`campaigns`, campaigns);
+
+  return (
+    <main className="layout-container">
+      <div className="mb-10 flex items-center justify-between">
+        <h1 className="text-xl">Support a campaign</h1>
+        <Link href={generalRoutes.campaign}>See more</Link>
+      </div>
+
+      <Carousel slidesToShow={3} autoplay dots={false}>
+        {campaigns?.map((item: unknown, index: number) => (
+          <CampaignCard key={`campaigns-${index}`} campaign={item} />
+        ))}
+      </Carousel>
+    </main>
+  );
+};
+
+export default CrowdfundCampaigns;

@@ -20,7 +20,6 @@
 
 # Giving Chain 
 
-
 > A decentralized crowdfunding and charity Dapp on BNB chain
 
 #### **N/B**: All PRs should be made to the [staging](https://github.com/coolpythoncodes/Giving-Chain-Dapp/tree/staging) branch
@@ -46,10 +45,18 @@ yarn install
 # to get PROJECT_ID, CLIENT_KEY, and APP_ID
 
 - Copy `.env.example` to a new `.env.local` file on Giving-Chain-Dapp root folder
+- Copy `secret.example.json` to a new `secret.json` // ensure you don't expose this to the public
 cd Giving-Chain-Dapp
 
 #Get your web development server running.
 yarn start
+
+# compile the contract at the root directory
+npx hardhat compile
+
+# deploy to bsc testnet
+yarn deploy-testnet
+
 ```
 
 ## 🤝 Contributing
@@ -66,6 +73,9 @@ Give a ⭐ if you like this project!
 
 - [BNB Faucet](https://testnet.bnbchain.org/faucet-smart)
 - [Particle network](https://particle.network/)
+- [BSC scan api key](https://bscscan.com/myapikey)
+- [Verified Giving Chain Token address on BSC scan](https://testnet.bscscan.com/address/0xd555d8f1d6dB7456Eb623125eE235C1393eCE9E6#code)
+- [Verified Crowd Fund address on BSC scan](https://testnet.bscscan.com/address/0x7b8c9c32c92e25B2725bb457C4C1790F717Dc980#code)
 
 [contributors-shield]: https://img.shields.io/github/contributors/coolpythoncodes/Giving-Chain-Dapp?style=for-the-badge
 [contributors-url]: https://github.com/coolpythoncodes/Giving-Chain-Dapp/graphs/contributors

@@ -66,3 +66,16 @@ textarea {
   width: 100%;
   height: 60vh;
 }
+
+
+.slick-slide > div {
+  margin: 0 10px !important;
+}
+
+.slick-list {
+  margin: 0 -10px !important;
+}
+
+.particle-account-info.particle-chain {
+    display: none;
+}

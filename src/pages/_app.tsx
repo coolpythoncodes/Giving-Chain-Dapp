@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { evmWallets } from "@particle-network/connect";
 import { ModalProvider } from "@particle-network/connect-react-ui";
 import { WalletEntryPosition } from "@particle-network/auth";
@@ -8,10 +9,19 @@ import Layout from "~/modules/common/component/layout";
 import { Space_Grotesk } from "next/font/google";
 
 import "~/styles/globals.css";
+import { ContractContextProvider } from "~/context/ContractContext";
 
 const space = Space_Grotesk({ subsets: ["latin"], variable: "--font-space" });
 
 const MyApp: AppType = ({ Component, pageProps }) => {
+  const [mounted, setMounted] = useState(false);
+
+  // const connectKit = useConnectKit()
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <ModalProvider
       walletSort={["Particle Auth", "Wallet"]}
@@ -41,11 +51,15 @@ const MyApp: AppType = ({ Component, pageProps }) => {
       language="en"
       theme={"auto"}
     >
-      <main className={`${space.className} ${space.variable}`}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </main>
+      {mounted ? (
+        <ContractContextProvider>
+          <main className={`${space.className} ${space.variable}`}>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </main>
+        </ContractContextProvider>
+      ) : null}
     </ModalProvider>
   );
 };
