@@ -1,5 +1,5 @@
 export const routes = {
-    fundraise: '/',
+    fundraise: '/create-campaign',
     ticketSales: '/',
     lunch: '/',
     supportCreator: '/'

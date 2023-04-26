@@ -23,6 +23,9 @@
     "paths": {
       "~/*": [
         "./src/*"
+      ],
+      "~/artifacts*": [
+        "artifacts/*"
       ]
     },
     "module": "esnext"

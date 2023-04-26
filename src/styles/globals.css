@@ -63,3 +63,12 @@ textarea {
   background: url("../../public/assets/home/join.png") no-repeat cover ;
 
 }
+
+
+.slick-slide > div {
+  margin: 0 10px !important;
+}
+
+.slick-list {
+  margin: 0 -10px !important;
+}

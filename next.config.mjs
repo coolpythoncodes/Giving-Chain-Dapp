@@ -7,6 +7,16 @@
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'ipfs.io',
+        port: '',
+        pathname: '/ipfs/**',
+      },
+    ],
+  },
 
   /**
    * If you have the "experimental: { appDir: true }" setting enabled, then you
