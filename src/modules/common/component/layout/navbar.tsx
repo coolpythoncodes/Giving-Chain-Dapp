@@ -49,7 +49,7 @@ const Navbar = () => {
               </li>
             ))}
           </ul>
-          <ConnectButton />
+          <ConnectButton  />
           {/* <Button className="border-none bg-[#FF6B00] text-white">
             Connect wallet
           </Button> */}

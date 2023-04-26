@@ -19,6 +19,7 @@
     "@particle-network/provider": "^0.12.2",
     "@particle-network/solana-wallet": "^0.12.2",
     "@solana/web3.js": "^1.75.0",
+    "@types/numeral": "^2.0.2",
     "@walletconnect/ethereum-provider": "1.8.0",
     "@web3modal/ethereum": "^2.3.6",
     "antd": "^5.4.4",

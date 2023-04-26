@@ -72,3 +72,7 @@ textarea {
 .slick-list {
   margin: 0 -10px !important;
 }
+
+.particle-account-info.particle-chain {
+    display: none;
+}
