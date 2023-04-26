@@ -60,6 +60,9 @@ textarea {
 }
 
 .join-us-bg{
-  background: url("../../public/assets/home/join.png") no-repeat cover ;
-
+  background-image: url("../image/join.png") ;
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 60vh;
 }
