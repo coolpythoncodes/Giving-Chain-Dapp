@@ -22,7 +22,11 @@ const Navbar = () => {
   return (
     <nav
       className={`font-space ${
-        router.pathname === "/" ? "bg-[#190E0A]" : "bg-[#F5F5F5]"
+        router.pathname === "/"
+          ? "bg-[#190E0A]"
+          : router.pathname.includes("/campaign")
+          ? "bg-[#FCFCFC]"
+          : "bg-[#F5F5F5]"
       }`}
     >
       <div className="layout-container flex h-12 items-center justify-between md:h-20">
@@ -49,7 +53,7 @@ const Navbar = () => {
               </li>
             ))}
           </ul>
-          <ConnectButton  />
+          <ConnectButton />
           {/* <Button className="border-none bg-[#FF6B00] text-white">
             Connect wallet
           </Button> */}

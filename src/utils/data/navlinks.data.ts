@@ -1,20 +1,20 @@
-import { routes } from ".";
+import { generalRoutes } from ".";
 
 export const navlinks = [
   {
     name: "Fund raise",
-    to: routes.fundraise,
+    to: generalRoutes.fundraise,
   },
   {
     name: "Charity lunch",
-    to: routes.lunch,
+    to: generalRoutes.lunch,
   },
   {
     name: "ticket sales",
-    to: routes.ticketSales,
+    to: generalRoutes.ticketSales,
   },
   {
     name: "support creator",
-    to: routes.supportCreator,
+    to: generalRoutes.supportCreator,
   },
 ];

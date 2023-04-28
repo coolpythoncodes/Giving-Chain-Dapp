@@ -1,9 +1,9 @@
 import React from "react";
 import { type NextPage } from "next";
 import Head from "next/head";
-import { YourCampaign } from "~/modules/common/section/campaign";
+import { YourCampaigns } from "~/modules/common/section/your-campaign";
 
-const Campaign: NextPage = () => {
+const YourCampaign: NextPage = () => {
   return (
     <>
       <Head>
@@ -11,9 +11,9 @@ const Campaign: NextPage = () => {
         <meta name="description" content="Giving Chain" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <YourCampaign />
+      <YourCampaigns />
     </>
   )
 }
 
-export default Campaign
+export default YourCampaign

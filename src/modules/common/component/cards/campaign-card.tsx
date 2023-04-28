@@ -16,7 +16,7 @@ const CampaignCard = ({ campaign }) => {
   }, []);
 
   return (
-    <div className="error">
+    <div>
       <Image
         src={campaign?.campaignImageUrl}
         alt=""
@@ -25,7 +25,7 @@ const CampaignCard = ({ campaign }) => {
         className="w-full"
       />
       <p className="mb-4 mt-2 line-clamp-3">{campaign?.description}</p>
-      <p className="">
+      <p className="text-base font-bold">
         {numeral(formatUnit(campaign?.amountRaised)).format(",")} USDC raised -{" "}
         {donors?.length} donations
       </p>

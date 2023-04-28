@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import React from "react";
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import { Button, Form } from "antd";
 
 import back from "../../../../../public/assets/campaign/back.svg";
 import { TextArea, TextInput } from "../../component/inputs";
-import { generalRoutes } from "../../utils/data/routes.data";
+import { generalRoutes } from "../../../../utils/data/routes.data";
 import Link from "next/link";
 
 const initialFormData = {
@@ -20,7 +20,6 @@ const CampaignForm = () => {
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const values = await form.validateFields();
 
     console.log(values)
@@ -30,8 +29,8 @@ const CampaignForm = () => {
     <main className="bg-[#F5F5F5]">
       <div className="layout-container flex justify-center lg:py-[76px] md:py-[50px] py-[40px]">
         <div className="w-full md:w-[80%] lg:w-[60%]">
-          <Link href={generalRoutes.campaign} className="">
-            <Image src={back} alt="back" />
+          <Link href={generalRoutes.yourCampaign} className="">
+            <Image src={back as StaticImageData} alt="back" />
           </Link>
 
           <div

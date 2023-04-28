@@ -44,12 +44,12 @@ yarn install
 # create a particle network project from https://dashboard.particle.network/#/project/all 
 # to get PROJECT_ID, CLIENT_KEY, and APP_ID
 
-- Copy `.env.example` to a new `.env.local` file on Giving-Chain-Dapp root folder
+- Copy `.env.example` to a new `.env` file on Giving-Chain-Dapp root folder
 - Copy `secret.example.json` to a new `secret.json` // ensure you don't expose this to the public
 cd Giving-Chain-Dapp
 
 #Get your web development server running.
-yarn start
+yarn dev
 
 # compile the contract at the root directory
 npx hardhat compile

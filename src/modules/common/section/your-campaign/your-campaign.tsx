@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import React from "react";
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import { Button } from "antd";
 import Link from "next/link";
 
 import checklist from "../../../../../public/assets/campaign/checklist.svg";
-import { generalRoutes } from "../../utils/data/routes.data";
+import { generalRoutes } from "../../../../utils/data/routes.data";
 
 const YourCampaign = () => {
   return (
@@ -24,7 +23,7 @@ const YourCampaign = () => {
               borderRadius: "8px",
             }}
           >
-            <Image src={checklist} alt="checklist" />
+            <Image src={checklist as StaticImageData} alt="checklist" />
             <h1 className="text-[#1F1F1F] font-semibold text-lg md:text-xl mt-4 mb-3">Your orders will show here</h1>
             <p className="text-[#475467] font-normal text-base">This is where you will fulfill orders, collect payments and track orders progress</p>
             <Link href={generalRoutes.createCampaign}>

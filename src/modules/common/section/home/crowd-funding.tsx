@@ -6,7 +6,8 @@ import pic1 from "../../../../../public/assets/home/pic1.png";
 import pic2 from "../../../../../public/assets/home/pic2.png";
 import pic3 from "../../../../../public/assets/home/pic3.png";
 import { Button } from "antd";
-import { generalRoutes } from "../../utils/data/routes.data";
+import { generalRoutes } from "~/utils/data";
+// import { generalRoutes } from "../../../../utils/data/routes.data";
 
 const CrowdFunding = () => {
   return (

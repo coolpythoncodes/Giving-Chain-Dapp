@@ -24,21 +24,21 @@ const ContractContextProvider = ({
   children,
 }: ContractContextProviderProps) => {
   const initCrowdFundContractAddress = () => {
-    try {
-      const provider = new ethers.providers.Web3Provider(
-        window.ethereum as ExternalProvider
-      );
-      // const signer = provider.getSigner();
-      const _contract = new ethers.Contract(
-        crowdFundContractAddress,
-        crowdFundABI.abi,
-        provider
-      );
+    // try {
+    const provider = new ethers.providers.Web3Provider(
+      window.ethereum as ExternalProvider
+    );
+    // const signer = provider.getSigner();
+    const _contract = new ethers.Contract(
+      crowdFundContractAddress,
+      crowdFundABI.abi,
+      provider
+    );
 
-      return _contract;
-    } catch (error) {
-      throw Error("Address is Null");
-    }
+    return _contract;
+    // } catch (error) {
+    //   throw Error("Address is Null");
+    // }
   };
   const getCampaign = async (): Promise<unknown> => {
     const contract = initCrowdFundContractAddress() as CrowdFundContract;

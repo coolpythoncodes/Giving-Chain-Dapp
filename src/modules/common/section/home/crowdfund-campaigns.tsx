@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { CampaignCard } from "../../component/cards";
 import { Carousel } from "antd";
 import Link from "next/link";
-import { generalRoutes } from "../../utils/data/routes.data";
+// import { generalRoutes } from "../../../../utils/data/routes.data";
 import { useContractContext } from "~/context/ContractContext";
+import { generalRoutes } from "~/utils/data";
 
 const CrowdfundCampaigns = () => {
   const [campaigns, setCampaigns] = useState([]);

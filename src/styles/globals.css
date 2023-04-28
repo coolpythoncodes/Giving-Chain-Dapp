@@ -25,7 +25,7 @@
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
 }
 
-button{
+button {
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
 }
 
@@ -59,14 +59,13 @@ textarea {
   resize: none;
 }
 
-.join-us-bg{
-  background-image: url("../image/join.png") ;
+.join-us-bg {
+  background-image: url("../image/join.png");
   background-size: cover;
   background-repeat: no-repeat;
   width: 100%;
-  height: 60vh;
+  height: 50vh;
 }
-
 
 .slick-slide > div {
   margin: 0 10px !important;
@@ -77,5 +76,51 @@ textarea {
 }
 
 .particle-account-info.particle-chain {
-    display: none;
+  display: none;
+}
+
+.dropdown .ant-btn {
+  width: 151px;
+  height: 40px;
+  border: 1px solid #d0d5dd;
+  box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.dropdown .ant-btn:hover,
+.dropdown .ant-btn:focus {
+  color: #344054 !important;
+  border-color: #d9d9d9 !important;
+}
+
+.donate-btn-container .mint-btn:hover {
+  color: #000 !important;
+  border-color: #ff6b00 !important;
+}
+.show-more .mint-btn:hover {
+  color: #000 !important;
+  border-color: #458e52 !important;
+}
+
+.donation-goals-con {
+  background: #fff;
+  border-radius: 0.75rem;
+  box-shadow: 0 0.3125rem 1rem -0.1875rem rgba(0, 0, 0, 0.2);
+  padding-bottom: 1.5rem;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 1rem;
+  padding: 20px;
+}
+
+
+.ant-input:hover, .ant-input:focus{
+  border-color: #D0D5DD !important; 
+  box-shadow: none;
 }
