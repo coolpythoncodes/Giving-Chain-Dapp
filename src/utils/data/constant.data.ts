@@ -1,5 +1,5 @@
-import crowdFundABI from "~/artifactscontracts/CrowdFund.sol/CrowdFund.json";
-import giveChainTokenABI from "~/artifactscontracts/GiveChainToken.sol/GiveChainToken.json";
+import crowdFundABI from "../CrowdFund.json";
+import giveChainTokenABI from "../GiveChainToken.json";
 
 export const crowdFundContractAddress =
   "0x7b8c9c32c92e25B2725bb457C4C1790F717Dc980";
