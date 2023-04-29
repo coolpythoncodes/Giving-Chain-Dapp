@@ -20,7 +20,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+  }, []);  
 
   return (
     <ModalProvider

@@ -2,10 +2,11 @@ import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
 import { Drawer } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { navlinks } from "~/utils/data";
 import { ConnectButton } from "@particle-network/connect-react-ui";
 import "@particle-network/connect-react-ui/dist/index.css";
+import { useModalState } from "@particle-network/connect-react-ui";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -18,6 +19,16 @@ const Navbar = () => {
   const onClose = () => {
     setOpen(false);
   };
+
+  const { accountModalOpen } = useModalState();
+
+  useEffect(() => {
+    document.body.style.overflow = "visible";
+    const htmlElement = document.getElementsByTagName("html")[0];
+    if (htmlElement) {
+      htmlElement.style.overflow = "visible";
+    }
+  }, [accountModalOpen]);
 
   return (
     <nav
@@ -83,7 +94,7 @@ const Navbar = () => {
             </li>
           ))}
         </ul>
-        <ConnectButton />
+        {/* <ConnectButton /> */}
       </Drawer>
     </nav>
   );

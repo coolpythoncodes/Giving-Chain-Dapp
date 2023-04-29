@@ -12,6 +12,10 @@
   }
 }
 
+html {
+  overflow: visible;
+}
+
 .ant-btn-default:not(:disabled):hover {
   color: white !important;
 }
@@ -119,8 +123,8 @@ textarea {
   padding: 20px;
 }
 
-
-.ant-input:hover, .ant-input:focus{
-  border-color: #D0D5DD !important; 
+.ant-input:hover,
+.ant-input:focus {
+  border-color: #d0d5dd !important;
   box-shadow: none;
 }
