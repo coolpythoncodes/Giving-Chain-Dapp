@@ -4,17 +4,21 @@ import numeral from "numeral";
 import { useEffect, useState } from "react";
 
 import { useContractContext } from "~/context/ContractContext";
+import { type ICampaigns, type IDonors } from "~/utils/interface/contract.interface";
 
-const CampaignCard = ({ campaign }) => {
-  const [donors, setDonors] = useState([]);
+type CampaignCardProps = {
+  campaign: ICampaigns;
+}
+
+const CampaignCard = ({ campaign }:CampaignCardProps) => {
+  const [donors, setDonors] = useState<IDonors[]>([]);
   const { getDonors } = useContractContext();
 
   useEffect(() => {
-    getDonors(campaign.campaignId).then((res) => setDonors(res)) as unknown;
+    void getDonors(campaign.campaignId).then((res:IDonors[]) => setDonors(res));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   return (
     <div>
       <Image

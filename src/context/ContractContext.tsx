@@ -2,11 +2,12 @@ import { type ExternalProvider } from "@ethersproject/providers";
 import { type Contract, ethers, type BigNumber, utils } from "ethers";
 import { type ReactNode, useContext, createContext } from "react";
 import { crowdFundABI, crowdFundContractAddress } from "~/utils/data";
+import { type ICampaigns, type IDonors } from "~/utils/interface/contract.interface";
 
 interface ContractContextInterface {
-  getCampaign: () => Promise<unknown>;
+  getCampaign: () => Promise<ICampaigns[]>;
   initCrowdFundContractAddress: () => "Connect your wallet" | Contract;
-  getDonors: (campaignId: BigNumber) => Promise<unknown>;
+  getDonors: (campaignId: BigNumber) => Promise<IDonors[]>;
 }
 
 type ContractContextProviderProps = {
@@ -14,8 +15,8 @@ type ContractContextProviderProps = {
   value?: ContractContextInterface;
 };
 export interface CrowdFundContract extends Contract {
-  getCampaigns(): Promise<unknown>;
-  getDonors(campaignId: number): Promise<unknown>;
+  getCampaigns(): Promise<ICampaigns[]>;
+  getDonors(campaignId: number): Promise<IDonors[]>;
 }
 
 const ContractContext = createContext<ContractContextInterface | null>(null);
@@ -40,7 +41,7 @@ const ContractContextProvider = ({
     //   throw Error("Address is Null");
     // }
   };
-  const getCampaign = async (): Promise<unknown> => {
+  const getCampaign = async (): Promise<ICampaigns[]> => {
     const contract = initCrowdFundContractAddress() as CrowdFundContract;
     const result = await contract.getCampaigns();
     return result;

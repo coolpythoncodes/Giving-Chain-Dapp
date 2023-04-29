@@ -94,7 +94,7 @@ const Navbar = () => {
             </li>
           ))}
         </ul>
-        {/* <ConnectButton /> */}
+        <ConnectButton />
       </Drawer>
     </nav>
   );

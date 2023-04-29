@@ -290,13 +290,13 @@ const Campaigns = () => {
             </Button>
           </Dropdown>
         </div>
-        <div className="xxl:grid-cols-4 grid grid-cols-1 gap-y-9  pt-12 md:grid-cols-2 md:gap-5 md:pb-[62px] md:pt-[62px] lg:grid-cols-3">
+        {/* <div className="xxl:grid-cols-4 grid grid-cols-1 gap-y-9  pt-12 md:grid-cols-2 md:gap-5 md:pb-[62px] md:pt-[62px] lg:grid-cols-3">
           {campaigns?.map((item: unknown, index: number) => (
             <Link key={`campaigns-${index}`} href="/campaign/women">
               <CampaignCard campaign={item} />
             </Link>
           ))}
-        </div>
+        </div> */}
       </div>
     </main>
   );

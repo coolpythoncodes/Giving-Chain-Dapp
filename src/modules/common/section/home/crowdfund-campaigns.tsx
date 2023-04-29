@@ -5,14 +5,15 @@ import Link from "next/link";
 // import { generalRoutes } from "../../../../utils/data/routes.data";
 import { useContractContext } from "~/context/ContractContext";
 import { generalRoutes } from "~/utils/data";
+import { type ICampaigns } from "~/utils/interface/contract.interface";
 
 const CrowdfundCampaigns = () => {
-  const [campaigns, setCampaigns] = useState([]);
+  const [campaigns, setCampaigns] = useState<ICampaigns[]>([]);
   const { getCampaign } = useContractContext();
 
   useEffect(() => {
-    getCampaign().then((res) => setCampaigns(res)) as unknown;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    getCampaign().then((res: ICampaigns[]) => setCampaigns(res)) as unknown;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   console.log(`campaigns`, campaigns);
@@ -25,7 +26,7 @@ const CrowdfundCampaigns = () => {
       </div>
 
       <Carousel slidesToShow={3} autoplay dots={false}>
-        {campaigns?.map((item: unknown, index: number) => (
+        {campaigns?.map((item, index: number) => (
           <CampaignCard key={`campaigns-${index}`} campaign={item} />
         ))}
       </Carousel>
