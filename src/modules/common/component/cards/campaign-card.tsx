@@ -4,23 +4,31 @@ import numeral from "numeral";
 import { useEffect, useState } from "react";
 
 import { useContractContext } from "~/context/ContractContext";
-import { type ICampaigns, type IDonors } from "~/utils/interface/contract.interface";
+import {
+  type ICampaigns,
+  type IDonors,
+} from "~/utils/interface/contract.interface";
+import Link from "next/link";
 
 type CampaignCardProps = {
   campaign: ICampaigns;
-}
+};
 
-const CampaignCard = ({ campaign }:CampaignCardProps) => {
+const CampaignCard = ({ campaign }: CampaignCardProps) => {
   const [donors, setDonors] = useState<IDonors[]>([]);
   const { getDonors } = useContractContext();
 
+  const campaignId = formatUnit(campaign.campaignId) * 10 ** 18;
+
   useEffect(() => {
-    void getDonors(campaign.campaignId).then((res:IDonors[]) => setDonors(res));
+    void getDonors(campaign.campaignId).then((res: IDonors[]) =>
+      setDonors(res)
+    );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    <div>
+    <Link href={`/campaign/${campaignId}`} className="text-black">
       <Image
         src={campaign?.campaignImageUrl}
         alt=""
@@ -33,7 +41,7 @@ const CampaignCard = ({ campaign }:CampaignCardProps) => {
         {numeral(formatUnit(campaign?.amountRaised)).format(",")} USDC raised -{" "}
         {donors?.length} donations
       </p>
-    </div>
+    </Link>
   );
 };
 

@@ -2,7 +2,7 @@ export const generalRoutes = {
   createCampaign: "/create-campaign",
   yourCampaign: "/your-campaign",
   campaign: "/campaign",
-  fundraise: "/fundraise",
+  fundraise: "/campaign",
   lunch: "/lunch",
   ticketSales: "/ticketSales",
   supportCreator: "/supportCreator",

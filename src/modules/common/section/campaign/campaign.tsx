@@ -1,272 +1,38 @@
 import { DownOutlined } from "@ant-design/icons";
 import { Button, Dropdown } from "antd";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { generalRoutes } from "~/utils/data";
 
-import campaignImg from "../../../../../public/assets/campaign/campaign-img.png";
 import { CampaignCard } from "../../component/cards";
-
-const campaigns = [
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1200,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-  {
-    campaignImageUrl: campaignImg,
-    description:
-      "Support Women At Risk International Foundation (WARIF) in raising $50,000 to educate 6,000 girls.",
-    amountRaised: 1430,
-  },
-];
+import { type ICampaigns } from "~/utils/interface/contract.interface";
+import { useContractContext } from "~/context/ContractContext";
+import { useAccount } from "@particle-network/connect-react-ui";
 
 const Campaigns = () => {
+  const [campaigns, setCampaigns] = useState<ICampaigns[]>([]);
+  const { getCampaign } = useContractContext();
+  const account = useAccount();
+
+  useEffect(() => {
+    if (account) {
+      getCampaign().then((res: ICampaigns[]) => setCampaigns(res)) as unknown;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account]);
+
   const items = [
     {
-      label: "Gift",
+      label: "All campaigns",
       key: "1",
+    },
+    {
+      label: "My Campaigns",
+      key: "2",
+    },
+    {
+      label: "My Claimed Campaigns",
+      key: "3",
     },
   ];
 
@@ -290,13 +56,13 @@ const Campaigns = () => {
             </Button>
           </Dropdown>
         </div>
-        {/* <div className="xxl:grid-cols-4 grid grid-cols-1 gap-y-9  pt-12 md:grid-cols-2 md:gap-5 md:pb-[62px] md:pt-[62px] lg:grid-cols-3">
-          {campaigns?.map((item: unknown, index: number) => (
+        <div className="xxl:grid-cols-4 grid grid-cols-1 gap-y-9  pt-12 md:grid-cols-2 md:gap-5 md:pb-[62px] md:pt-[62px] lg:grid-cols-3">
+          {campaigns?.map((item, index) => (
             <Link key={`campaigns-${index}`} href="/campaign/women">
               <CampaignCard campaign={item} />
             </Link>
           ))}
-        </div> */}
+        </div>
       </div>
     </main>
   );

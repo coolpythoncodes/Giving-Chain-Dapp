@@ -6,19 +6,22 @@ import Link from "next/link";
 import { useContractContext } from "~/context/ContractContext";
 import { generalRoutes } from "~/utils/data";
 import { type ICampaigns } from "~/utils/interface/contract.interface";
+import { useAccount } from "@particle-network/connect-react-ui";
 
 const CrowdfundCampaigns = () => {
   const [campaigns, setCampaigns] = useState<ICampaigns[]>([]);
   const { getCampaign } = useContractContext();
+  const account = useAccount();
 
   useEffect(() => {
-    getCampaign().then((res: ICampaigns[]) => setCampaigns(res)) as unknown;
+    if (account) {
+      getCampaign().then((res: ICampaigns[]) => setCampaigns(res)) as unknown;
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [account]);
 
-  console.log(`campaigns`, campaigns);
 
-  return (
+  return campaigns.length ? (
     <main className="layout-container">
       <div className="mb-10 flex items-center justify-between">
         <h1 className="text-xl">Support a campaign</h1>
@@ -31,7 +34,7 @@ const CrowdfundCampaigns = () => {
         ))}
       </Carousel>
     </main>
-  );
+  ) : null;
 };
 
 export default CrowdfundCampaigns;

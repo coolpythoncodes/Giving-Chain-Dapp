@@ -1,13 +1,26 @@
 import { type ExternalProvider } from "@ethersproject/providers";
-import { type Contract, ethers, type BigNumber, utils } from "ethers";
+import { type Contract, ethers, type BigNumber } from "ethers";
 import { type ReactNode, useContext, createContext } from "react";
-import { crowdFundABI, crowdFundContractAddress } from "~/utils/data";
-import { type ICampaigns, type IDonors } from "~/utils/interface/contract.interface";
+import {
+  crowdFundABI,
+  crowdFundContractAddress,
+  giveChainTokenABI,
+  giveChainTokenContractAddress,
+} from "~/utils/data";
+import { formatUnit } from "~/utils/helper";
+import {
+  type AddressType,
+  type ICampaigns,
+  type IDonors,
+} from "~/utils/interface/contract.interface";
 
 interface ContractContextInterface {
   getCampaign: () => Promise<ICampaigns[]>;
-  initCrowdFundContractAddress: () => "Connect your wallet" | Contract;
+  initCrowdFundContractAddress: () => Contract;
+  initGiveChainTokenContractAddress: () => Contract;
   getDonors: (campaignId: BigNumber) => Promise<IDonors[]>;
+  getCampaignById: (campaignId: number) => Promise<ICampaigns>;
+  getUSDCBalance: (address: AddressType) => Promise<BigNumber>;
 }
 
 type ContractContextProviderProps = {
@@ -17,6 +30,24 @@ type ContractContextProviderProps = {
 export interface CrowdFundContract extends Contract {
   getCampaigns(): Promise<ICampaigns[]>;
   getDonors(campaignId: number): Promise<IDonors[]>;
+  campaigns(campaignId: number): Promise<ICampaigns>;
+  createCampaign(
+    category: string,
+    goal: number,
+    description: string,
+    startAt: number,
+    endAt: number,
+    location: string,
+    campaignImageUrl: string
+  ): Promise<unknown>;
+}
+
+export interface GiveChainTokenContract extends Contract {
+  balanceOf(address: AddressType): Promise<BigNumber>;
+  mint(): Promise<unknown>;
+  wait(): Promise<unknown>;
+  allowance(address: AddressType, address1: AddressType): Promise<BigNumber>;
+  approve(address: AddressType, amount: number): Promise<unknown>;
 }
 
 const ContractContext = createContext<ContractContextInterface | null>(null);
@@ -25,22 +56,31 @@ const ContractContextProvider = ({
   children,
 }: ContractContextProviderProps) => {
   const initCrowdFundContractAddress = () => {
-    // try {
     const provider = new ethers.providers.Web3Provider(
       window.ethereum as ExternalProvider
     );
-    // const signer = provider.getSigner();
+    const signer = provider.getSigner();
     const _contract = new ethers.Contract(
       crowdFundContractAddress,
       crowdFundABI.abi,
-      provider
+      signer
     );
-
     return _contract;
-    // } catch (error) {
-    //   throw Error("Address is Null");
-    // }
   };
+  const initGiveChainTokenContractAddress = () => {
+    const provider = new ethers.providers.Web3Provider(
+      window.ethereum as ExternalProvider
+    );
+    const signer = provider.getSigner();
+
+    const _contract = new ethers.Contract(
+      giveChainTokenContractAddress,
+      giveChainTokenABI.abi,
+      signer
+    );
+    return _contract;
+  };
+
   const getCampaign = async (): Promise<ICampaigns[]> => {
     const contract = initCrowdFundContractAddress() as CrowdFundContract;
     const result = await contract.getCampaigns();
@@ -49,13 +89,34 @@ const ContractContextProvider = ({
 
   const getDonors = async (campaignId: BigNumber) => {
     const contract = initCrowdFundContractAddress() as CrowdFundContract;
-    const _campaignId = +utils.formatEther(campaignId) * 10 ** 18;
+    const _campaignId = +formatUnit(campaignId) * 10 ** 18;
     const result = await contract.getDonors(_campaignId);
     return result;
   };
+
+  const getCampaignById = async (campaignId: number) => {
+    const contract = initCrowdFundContractAddress() as CrowdFundContract;
+    const result = await contract.campaigns(campaignId);
+    return result;
+  };
+
+  const getUSDCBalance = async (address: AddressType) => {
+    const contract =
+      initGiveChainTokenContractAddress() as GiveChainTokenContract;
+    const result = await contract.balanceOf(address);
+    return result;
+  };
+
   return (
     <ContractContext.Provider
-      value={{ initCrowdFundContractAddress, getCampaign, getDonors }}
+      value={{
+        initCrowdFundContractAddress,
+        initGiveChainTokenContractAddress,
+        getCampaign,
+        getDonors,
+        getCampaignById,
+        getUSDCBalance,
+      }}
     >
       {children}
     </ContractContext.Provider>

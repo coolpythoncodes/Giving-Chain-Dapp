@@ -10,6 +10,7 @@ import { Space_Grotesk } from "next/font/google";
 
 import "~/styles/globals.css";
 import { ContractContextProvider } from "~/context/ContractContext";
+import { Toaster } from "react-hot-toast";
 
 const space = Space_Grotesk({ subsets: ["latin"], variable: "--font-space" });
 
@@ -20,7 +21,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
 
   useEffect(() => {
     setMounted(true);
-  }, []);  
+  }, []);
 
   return (
     <ModalProvider
@@ -55,6 +56,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         <ContractContextProvider>
           <main className={`${space.className} ${space.variable}`}>
             <Layout>
+              <Toaster />
               <Component {...pageProps} />
             </Layout>
           </main>
