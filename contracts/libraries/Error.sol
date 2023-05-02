@@ -4,17 +4,12 @@ pragma solidity 0.8.18;
 /// @dev goal of campaign is zero
 error ErrGoalZero();
 
-/// @dev start time of a campaign is in the past
-error ErrStartAtInPast();
-
 /// @dev end time of a campaign is before start time
 error ErrEndAtBeforeStartAt();
 
 /// @dev end time of a campaign is before start time
 error ErrExceedMaxRaisedDuration();
 
-/// @dev startAt is after current block stamp
-error ErrCampaignHasNotStarted();
 
 /// @dev endAt is before current block stamp
 error ErrCampaignHasEnded();

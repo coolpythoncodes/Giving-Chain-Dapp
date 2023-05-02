@@ -6,7 +6,7 @@ library Events {
         uint indexed _id,
         address indexed fundraiser,
         uint goal,
-        uint startAt,
+        uint createdAt,
         uint endAt
         );
 

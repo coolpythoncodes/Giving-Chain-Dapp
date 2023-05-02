@@ -36,6 +36,7 @@ const CampaignCard = ({ campaign }: CampaignCardProps) => {
         height={227}
         className="w-full"
       />
+      <h1 className="font-bold">{campaign?.title}</h1>
       <p className="mb-4 mt-2 line-clamp-3">{campaign?.description}</p>
       <p className="text-base font-bold">
         {numeral(formatUnit(campaign?.amountRaised)).format(",")} USDC raised -{" "}

@@ -1,10 +1,13 @@
 import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
-import { Drawer } from "antd";
+import { Button, Drawer } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { navlinks } from "~/utils/data";
-import { ConnectButton } from "@particle-network/connect-react-ui";
+import {
+  ConnectButton,
+  // useConnectKit,
+} from "@particle-network/connect-react-ui";
 import "@particle-network/connect-react-ui/dist/index.css";
 import { useModalState } from "@particle-network/connect-react-ui";
 
@@ -21,6 +24,13 @@ const Navbar = () => {
   };
 
   const { accountModalOpen } = useModalState();
+  // const { particle:pn } = useConnectKit();
+
+  // const handleConnect = async () => {
+  //   const userInfo = await pn.auth.login({
+  //     preferredAuthType: "google", //support facebook,google,twitter,apple,discord,github,twitch,microsoft,linkedin etc.
+  //   });
+  // };
 
   useEffect(() => {
     document.body.style.overflow = "visible";
@@ -65,7 +75,10 @@ const Navbar = () => {
             ))}
           </ul>
           <ConnectButton />
-          {/* <Button className="border-none bg-[#FF6B00] text-white">
+          {/* <Button
+            onClick={handleConnect}
+            className="border-none bg-[#FF6B00] text-white"
+          >
             Connect wallet
           </Button> */}
         </div>

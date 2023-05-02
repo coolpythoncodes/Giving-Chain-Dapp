@@ -13,7 +13,8 @@ export interface ICampaigns {
   fundraiser: AddressType;
   goal: BigNumber;
   location: string;
-  startAt: BigNumber;
+  title: string;
+  createdAt: number,
 }
 
 export interface IDonors {

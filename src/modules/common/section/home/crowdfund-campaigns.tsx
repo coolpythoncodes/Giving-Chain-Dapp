@@ -19,6 +19,7 @@ const CrowdfundCampaigns = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account]);
+  console.log(campaigns)
 
 
   return campaigns.length ? (

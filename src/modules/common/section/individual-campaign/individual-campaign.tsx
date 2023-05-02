@@ -17,6 +17,7 @@ import {
   type ICampaigns,
 } from "~/utils/interface/contract.interface";
 import { toast } from "react-hot-toast";
+import { covertToReadableDate } from "~/utils/helper";
 
 type IndividualCampaignProps = {
   campaignId: number;
@@ -70,24 +71,26 @@ const IndividualCampaign = ({ campaignId }: IndividualCampaignProps) => {
 
   // console.log(campaign.);
 
-  return (
+  return campaign ? (
     <main className="bg-[#FCFCFC]">
       <div className=" layout-container py-10 ">
         <h1 className="mb-6 text-xl font-bold capitalize md:text-2xl lg:text-3xl">
-          ralph yarl
+          {campaign?.title}
         </h1>
         <div className="w-full items-start justify-between md:flex">
           <div className="w-full md:w-[62%]">
             <div className="relative mb-5 h-[50vh] w-full lg:h-[70vh]">
               <Image
-                src={campaign?.campaignImageUrl as string}
+                src={campaign?.campaignImageUrl}
                 alt="campaign"
                 sizes="100%"
                 fill
               />
             </div>
             <div className="flex items-center justify-between border-b border-[#D0D5DD] pb-4">
-              <p className="text-base font-normal">Created April 16, 2023</p>
+              <p className="text-base font-normal">
+                Created {covertToReadableDate(campaign?.createdAt)}
+              </p>
               <div className="flex items-center justify-between">
                 <TagOutlined className="mr-2" />
                 <p className="text-base font-normal">{campaign?.category}</p>
@@ -117,11 +120,14 @@ const IndividualCampaign = ({ campaignId }: IndividualCampaignProps) => {
                 Mint
               </Button>
             </div>
-            <Organisers />
+            <Organisers
+              fundraiser={campaign.fundraiser}
+              location={campaign.location}
+            />
             <WordsOfSupport />
           </div>
           <div className="donation-goals-con hidden md:block md:w-[35%]">
-            <Goals {...{ campaign, campaignId }} />
+            <Goals {...{ campaign }} minting={isMinting} />
           </div>
         </div>
         <div className="my-10 flex items-center justify-start">
@@ -133,10 +139,10 @@ const IndividualCampaign = ({ campaignId }: IndividualCampaignProps) => {
       <DonateModal
         showDonateModal={showDonateModal}
         onComplete={() => setShowDonateModal(!showDonateModal)}
-        fundraiser={campaign?.fundraiser as AddressType}
+        fundraiser={campaign?.fundraiser}
       />
     </main>
-  );
+  ) : null;
 };
 
 export default IndividualCampaign;

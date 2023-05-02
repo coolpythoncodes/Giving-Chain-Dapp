@@ -42,7 +42,8 @@ const Goals = ({ campaign, minting }: GoalsProps) => {
       const receipt = await txHash.wait();
       if (receipt) {
         void getUSDCBalance(account as AddressType).then((res) => {
-          const balance = formatUnit(res) * 10 ** 18;
+          const balance = formatUnit(res);
+          console.log(balance)
           setTokenBalance(balance);
         });
         setIsMinting(false);

@@ -41,7 +41,7 @@ async function main() {
         campaigns[i].category,
         campaigns[i].goal,
         campaigns[i].description,
-        startAt + campaigns[i]._startAt,
+        campaigns[i].title,
         startAt + campaigns[i]._startAt + 86400,
         campaigns[i]._loactions,
         campaigns[i]._campaignImageUrl

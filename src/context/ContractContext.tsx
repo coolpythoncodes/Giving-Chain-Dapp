@@ -1,4 +1,6 @@
 import { type ExternalProvider } from "@ethersproject/providers";
+import { useConnectKit } from "@particle-network/connect-react-ui";
+import { ParticleProvider } from "@particle-network/provider";
 import { type Contract, ethers, type BigNumber } from "ethers";
 import { type ReactNode, useContext, createContext } from "react";
 import {
@@ -35,7 +37,7 @@ export interface CrowdFundContract extends Contract {
     category: string,
     goal: number,
     description: string,
-    startAt: number,
+    title: string,
     endAt: number,
     location: string,
     campaignImageUrl: string
@@ -55,10 +57,10 @@ const ContractContext = createContext<ContractContextInterface | null>(null);
 const ContractContextProvider = ({
   children,
 }: ContractContextProviderProps) => {
+  const { particle } = useConnectKit();
+  const particleProvider = new ParticleProvider(particle.auth);
   const initCrowdFundContractAddress = () => {
-    const provider = new ethers.providers.Web3Provider(
-      window.ethereum as ExternalProvider
-    );
+    const provider = new ethers.providers.Web3Provider(particleProvider, "any");
     const signer = provider.getSigner();
     const _contract = new ethers.Contract(
       crowdFundContractAddress,
@@ -68,9 +70,7 @@ const ContractContextProvider = ({
     return _contract;
   };
   const initGiveChainTokenContractAddress = () => {
-    const provider = new ethers.providers.Web3Provider(
-      window.ethereum as ExternalProvider
-    );
+    const provider = new ethers.providers.Web3Provider(particleProvider, "any");
     const signer = provider.getSigner();
 
     const _contract = new ethers.Contract(
