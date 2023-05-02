@@ -13,7 +13,6 @@ import {
 } from "~/context/ContractContext";
 import { useAccount } from "@particle-network/connect-react-ui";
 import {
-  type AddressType,
   type ICampaigns,
 } from "~/utils/interface/contract.interface";
 import { toast } from "react-hot-toast";

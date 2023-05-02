@@ -1,18 +1,14 @@
-import { addHexPrefix, intToHex } from "@particle-network/auth";
 import { useAccount } from "@particle-network/connect-react-ui";
 import { Button, Form, Input, Modal } from "antd";
 import numeral from "numeral";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import {
   type GiveChainTokenContract,
   useContractContext,
 } from "~/context/ContractContext";
-import {
-  crowdFundContractAddress,
-  giveChainTokenContractAddress,
-} from "~/utils/data";
-import { formatUnit, parseToEther } from "~/utils/helper";
+import { crowdFundContractAddress } from "~/utils/data";
+import { parseToEther } from "~/utils/helper";
 import { type AddressType } from "~/utils/interface/contract.interface";
 
 interface IProps {
@@ -32,87 +28,30 @@ const DonateModal = ({ showDonateModal, onComplete, fundraiser }: IProps) => {
 
   const [donationAmount, setDonationAmount] = useState<number>(0);
   const [donationTipAmount, setDonationTipAmount] = useState<number>(0);
-  const { initGiveChainTokenContractAddress } = useContractContext();
+  const { initGiveChainTokenContractAddress, checkAllowanceBalance } =
+    useContractContext();
   const [isApproving, setIsApproving] = useState(false);
   const [isCheckingAllowance, setIsCheckingAllowance] = useState(false);
   const [allowanceBalance, setAllowanceBalance] = useState<number>();
+  const [isDonating, setIsDonating] = useState(false);
+  const [isApproved, setIsApproved] = useState<boolean | undefined>(false);
 
-  const checkAllowance = async () => {
-    setIsCheckingAllowance(true);
-    try {
-      const contract =
-        initGiveChainTokenContractAddress() as GiveChainTokenContract;
-      const allowance = await contract.allowance(
-        account,
-        giveChainTokenContractAddress
-      );
-      setAllowanceBalance(formatUnit(allowance));
-      setIsCheckingAllowance(false);
-    } catch (error) {
-      toast.error("Something went wrong");
-      setIsCheckingAllowance(false);
+  const handleApproval = async () => {
+    const values = (await form.validateFields()) as {
+      donationAmount: number;
+      donationTipAmount: number;
+    };
+    if (allowanceBalance) {
+      if (
+        allowanceBalance >=
+        values.donationAmount + values.donationTipAmount
+      ) {
+        return true;
+      } else {
+        return false;
+      }
     }
   };
-
-  // const handleApproveTransaction = async () => {
-  //   setIsApproving(true);
-  //   const notification = toast.loading(
-  //     "Approving transaction.(Don't leave this page)"
-  //   );
-  //   const accounts = await window.ethereum.request({
-  //     method: "eth_requestAccounts",
-  //   });
-  //   const from = accounts[0];
-  //   const method = "approve";
-  //   const values = (await form.validateFields()) as {
-  //     donationAmount: number;
-  //     donationTipAmount: number;
-  //   };
-  //   const amount = +values.donationAmount + +values.donationTipAmount;
-  //   const params = [
-  //     giveChainTokenContractAddress,
-  //     "erc20_approve",
-  //     [crowdFundContractAddress, parseToEther(+amount)],
-  //   ];
-
-  //   try {
-  //     const result = await window.web3.currentProvider.request({
-  //       method,
-  //       params,
-  //       from,
-  //     });
-
-  //     const gasLimit = await window.web3.eth.estimateGas({
-  //       from: from,
-  //       to: crowdFundContractAddress,
-  //       value: "0x0",
-  //       data: result,
-  //     });
-
-  //     const txnParams = {
-  //       from: accounts[0],
-  //       to: crowdFundContractAddress,
-  //       value: "0x0",
-  //       data: result,
-  //       gasLimit: addHexPrefix(intToHex(gasLimit)),
-  //     };
-  //     window.web3.eth.sendTransaction(txnParams, (error: any, hash) => {
-  //       if (error) {
-  //         if (error.code !== 4011) {
-  //           toast.error(error.message);
-  //         }
-  //         toast.error(error.message);
-  //       } else {
-  //         toast.success(`transaction ${hash}`);
-  //       }
-  //       setIsApproving(false);
-  //     });
-  //   } catch (e: any) {
-  //     setIsApproving(false);
-  //     console.log("sendERC20Approve", e);
-  //     toast.error(e.message ?? e);
-  //   }
-  // };
 
   const handleApproveTransaction = async () => {
     const values = (await form.validateFields()) as {
@@ -120,7 +59,7 @@ const DonateModal = ({ showDonateModal, onComplete, fundraiser }: IProps) => {
       donationTipAmount: number;
     };
     const amount = +values.donationAmount + +values.donationTipAmount;
-    console.log("amount", parseToEther(amount));
+    // console.log("amount", parseToEther(amount));
     setIsApproving(true);
     const notification = toast.loading(
       "Approving transaction.(Don't leave this page)"
@@ -134,7 +73,9 @@ const DonateModal = ({ showDonateModal, onComplete, fundraiser }: IProps) => {
       )) as GiveChainTokenContract;
       const receipt = await txHash.wait();
       if (receipt) {
-        void checkAllowance();
+        void checkAllowanceBalance(account).then((balance) => {
+          setAllowanceBalance(balance);
+        });
         toast.success(`Approval of Usdc ${amount} was successful`, {
           id: notification,
         });
@@ -157,6 +98,24 @@ const DonateModal = ({ showDonateModal, onComplete, fundraiser }: IProps) => {
 
     console.log(values);
   };
+
+  useEffect(() => {
+    if (account) {
+      setIsCheckingAllowance(true);
+      void checkAllowanceBalance(account).then((balance) => {
+        setAllowanceBalance(balance);
+        setIsCheckingAllowance(false);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account]);
+
+  useEffect(() => {
+    if (account) {
+      void handleApproval().then((res) => setIsApproved(res));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account]);
 
   return (
     <Modal
@@ -234,15 +193,48 @@ const DonateModal = ({ showDonateModal, onComplete, fundraiser }: IProps) => {
             </div>
           </div>
         </div>
+        <>
+          {isCheckingAllowance ? null : (
+            <>
+              {isApproved ? (
+                <Button
+                  loading={isDonating}
+                  disabled={isDonating}
+                  className="mt-5 h-[50px] w-full border-none bg-[#FF6B00] text-base text-white"
+                >
+                  Donate
+                </Button>
+              ) : null}
+            </>
+          )}
+        </>
 
-        <Button
+        {/* <Button
           className="mt-5 h-[50px] w-full border-none bg-[#FF6B00] text-base text-white"
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
           onClick={handleApproveTransaction}
         >
           Approve
-        </Button>
+        </Button> */}
       </Form>
+      <>
+        {isCheckingAllowance ? (
+          <p className="text-center">Checking for Approval...</p>
+        ) : (
+          <>
+            {!isApproved ? (
+              <Button
+                onClick={handleApproveTransaction}
+                loading={isApproving}
+                disabled={isApproved}
+                className="mt-5 h-[50px] w-full border-none bg-[#FF6B00] text-base text-white disabled:bg-gray-500"
+              >
+                Approve
+              </Button>
+            ) : null}
+          </>
+        )}
+      </>
     </Modal>
   );
 };

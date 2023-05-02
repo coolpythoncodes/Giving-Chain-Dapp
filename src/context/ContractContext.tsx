@@ -1,4 +1,3 @@
-import { type ExternalProvider } from "@ethersproject/providers";
 import { useConnectKit } from "@particle-network/connect-react-ui";
 import { ParticleProvider } from "@particle-network/provider";
 import { type Contract, ethers, type BigNumber } from "ethers";
@@ -23,6 +22,7 @@ interface ContractContextInterface {
   getDonors: (campaignId: BigNumber) => Promise<IDonors[]>;
   getCampaignById: (campaignId: number) => Promise<ICampaigns>;
   getUSDCBalance: (address: AddressType) => Promise<BigNumber>;
+  checkAllowanceBalance: (account: AddressType) => Promise<number>;
 }
 
 type ContractContextProviderProps = {
@@ -107,6 +107,16 @@ const ContractContextProvider = ({
     return result;
   };
 
+  const checkAllowanceBalance = async (account: AddressType) => {
+    const contract =
+      initGiveChainTokenContractAddress() as GiveChainTokenContract;
+    const allowance = await contract.allowance(
+      account,
+      crowdFundContractAddress
+    );
+    return formatUnit(allowance);
+  };
+
   return (
     <ContractContext.Provider
       value={{
@@ -116,6 +126,7 @@ const ContractContextProvider = ({
         getDonors,
         getCampaignById,
         getUSDCBalance,
+        checkAllowanceBalance,
       }}
     >
       {children}

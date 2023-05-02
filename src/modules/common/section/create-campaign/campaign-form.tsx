@@ -45,7 +45,6 @@ const CampaignForm = () => {
       );
       const receipt = txHash.wait();
       if (receipt) {
-        console.log("see TxHash", receipt.transactionHash);
         setCreatingCampaign(false);
         toast.success("Campaign created successfully", {
           id: notification,
