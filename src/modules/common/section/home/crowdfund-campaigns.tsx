@@ -19,8 +19,7 @@ const CrowdfundCampaigns = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account]);
-  console.log(campaigns)
-
+  console.log(campaigns);
 
   return campaigns.length ? (
     <main className="layout-container">
@@ -30,7 +29,7 @@ const CrowdfundCampaigns = () => {
       </div>
 
       <Carousel slidesToShow={3} autoplay dots={false}>
-        {campaigns?.map((item, index: number) => (
+        {[...campaigns]?.reverse()?.map((item, index: number) => (
           <CampaignCard key={`campaigns-${index}`} campaign={item} />
         ))}
       </Carousel>

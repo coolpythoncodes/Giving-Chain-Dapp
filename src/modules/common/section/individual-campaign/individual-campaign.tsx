@@ -13,10 +13,12 @@ import {
 } from "~/context/ContractContext";
 import { useAccount } from "@particle-network/connect-react-ui";
 import {
+  type IDonors,
   type ICampaigns,
+  type AddressType,
 } from "~/utils/interface/contract.interface";
 import { toast } from "react-hot-toast";
-import { covertToReadableDate } from "~/utils/helper";
+import { covertToReadableDate, formatUnit } from "~/utils/helper";
 
 type IndividualCampaignProps = {
   campaignId: number;
@@ -26,10 +28,17 @@ const IndividualCampaign = ({ campaignId }: IndividualCampaignProps) => {
   const [campaign, setCampaign] = useState<ICampaigns>();
   const [showDonateModal, setShowDonateModal] = useState<boolean>(false);
   const [isMinting, setIsMinting] = useState(false);
-  // const [tokenBalance, setTokenBalance] = useState<number>();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [percent, setPercent] = useState<number>();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [donors, setDonors] = useState<IDonors[]>([]);
 
-  const { getCampaignById, initGiveChainTokenContractAddress } =
-    useContractContext();
+  const {
+    getCampaignById,
+    initGiveChainTokenContractAddress,
+    getUSDCBalance,
+    setTokenBalance,
+  } = useContractContext();
 
   const account = useAccount();
 
@@ -42,10 +51,11 @@ const IndividualCampaign = ({ campaignId }: IndividualCampaignProps) => {
       const txHash = (await contract.mint()) as GiveChainTokenContract;
       const receipt = await txHash.wait();
       if (receipt) {
-        // void getUSDCBalance(account as AddressType).then((res) => {
-        //   const balance = formatUnit(res) * 10 ** 18;
-        //   setTokenBalance(balance);
-        // });
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        getUSDCBalance(account as AddressType).then((res) => {
+          const balance = formatUnit(res);
+          setTokenBalance(balance);
+        });
         setIsMinting(false);
         toast.success("Testnet USDC has been minted successfully", {
           id: notification,
@@ -64,6 +74,16 @@ const IndividualCampaign = ({ campaignId }: IndividualCampaignProps) => {
       getCampaignById(campaignId).then((res: ICampaigns) =>
         setCampaign(res)
       ) as unknown;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account]);
+
+  useEffect(() => {
+    if (account) {
+      void getUSDCBalance(account as AddressType).then((res) => {
+        const balance = formatUnit(res);
+        setTokenBalance(balance);
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account]);
@@ -100,7 +120,7 @@ const IndividualCampaign = ({ campaignId }: IndividualCampaignProps) => {
             </p>
 
             <div className="mb-4 block md:hidden">
-              <Goals {...{ campaign }} minting={isMinting} />
+              <Goals {...{ campaign, campaignId }} />
             </div>
 
             <div className="donate-btn-container flex w-full items-center justify-between border-b border-[#D0D5DD] pb-10">
@@ -126,7 +146,7 @@ const IndividualCampaign = ({ campaignId }: IndividualCampaignProps) => {
             <WordsOfSupport />
           </div>
           <div className="donation-goals-con hidden md:block md:w-[35%]">
-            <Goals {...{ campaign }} minting={isMinting} />
+            <Goals {...{ campaign, campaignId }} />
           </div>
         </div>
         <div className="my-10 flex items-center justify-start">
@@ -139,6 +159,10 @@ const IndividualCampaign = ({ campaignId }: IndividualCampaignProps) => {
         showDonateModal={showDonateModal}
         onComplete={() => setShowDonateModal(!showDonateModal)}
         fundraiser={campaign?.fundraiser}
+        campaignId={campaignId}
+        campaign={campaign}
+        setDonors={setDonors}
+        setPercent={setPercent}
       />
     </main>
   ) : null;

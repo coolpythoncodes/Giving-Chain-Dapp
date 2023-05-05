@@ -18,18 +18,22 @@ import { toast } from "react-hot-toast";
 
 type GoalsProps = {
   campaign: ICampaigns | undefined;
-  minting: boolean;
+  campaignId: number;
 };
 
-const Goals = ({ campaign, minting }: GoalsProps) => {
+const Goals = ({ campaign, campaignId }: GoalsProps) => {
   const [showDonateModal, setShowDonateModal] = useState<boolean>(false);
   const [isMinting, setIsMinting] = useState(false);
   const [percent, setPercent] = useState<number>();
   const [donors, setDonors] = useState<IDonors[]>([]);
-  const [tokenBalance, setTokenBalance] = useState<number>();
 
-  const { getDonors, getUSDCBalance, initGiveChainTokenContractAddress } =
-    useContractContext();
+  const {
+    getDonors,
+    getUSDCBalance,
+    initGiveChainTokenContractAddress,
+    tokenBalance,
+    setTokenBalance,
+  } = useContractContext();
   const account = useAccount();
 
   const handleMint = async () => {
@@ -41,9 +45,9 @@ const Goals = ({ campaign, minting }: GoalsProps) => {
       const txHash = (await contract.mint()) as GiveChainTokenContract;
       const receipt = await txHash.wait();
       if (receipt) {
-        void getUSDCBalance(account as AddressType).then((res) => {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        getUSDCBalance(account as AddressType).then((res) => {
           const balance = formatUnit(res);
-          console.log(balance)
           setTokenBalance(balance);
         });
         setIsMinting(false);
@@ -61,27 +65,32 @@ const Goals = ({ campaign, minting }: GoalsProps) => {
 
   useEffect(() => {
     if (campaign) {
-      void getDonors(campaign?.campaignId).then((res: IDonors[]) =>
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      getDonors(campaign?.campaignId).then((res: IDonors[]) =>
         setDonors(res)
       );
 
       const percentValue = Math.round(
-        (formatUnit(campaign?.amountRaised) / formatUnit(campaign?.goal)) * 100
+        (formatUnit(campaign?.amountRaised) /
+          (formatUnit(campaign?.goal) * 10 ** 18)) *
+          100
       );
+
       setPercent(percentValue);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [campaign]);
 
-  useEffect(() => {
-    if (account) {
-      void getUSDCBalance(account as AddressType).then((res) => {
-        const balance = formatUnit(res);
-        setTokenBalance(balance);
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, minting]);
+  // useEffect(() => {
+  //   if (account) {
+  //     void getUSDCBalance(account as AddressType).then((res) => {
+  //       const balance = formatUnit(res);
+  //       setTokenBalance(balance);
+  //     });
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [account]);
+  console.log("donors", donors);
 
   return campaign ? (
     <div className="donation-goals">
@@ -128,6 +137,10 @@ const Goals = ({ campaign, minting }: GoalsProps) => {
         showDonateModal={showDonateModal}
         onComplete={() => setShowDonateModal(!showDonateModal)}
         fundraiser={campaign.fundraiser}
+        campaignId={campaignId}
+        setDonors={setDonors}
+        campaign={campaign}
+        setPercent={setPercent}
       />
     </div>
   ) : null;

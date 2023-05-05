@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import React, { useState } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { Button, Form } from "antd";
 
@@ -8,12 +7,12 @@ import back from "../../../../../public/assets/campaign/back.svg";
 import { TextArea, TextInput } from "../../component/inputs";
 import { generalRoutes } from "../../../../utils/data/routes.data";
 import Link from "next/link";
-import { toast } from "react-hot-toast";
+// import { toast } from "react-hot-toast";
 import {
-  type CrowdFundContract,
-  useContractContext,
+  // type CrowdFundContract,
+  // useContractContext,
 } from "~/context/ContractContext";
-import { ethers } from "ethers";
+// import { ethers } from "ethers";
 
 const initialFormData = {
   amount: "",
@@ -21,51 +20,51 @@ const initialFormData = {
 };
 
 const CampaignForm = () => {
-  const [creatingCampaign, setCreatingCampaign] = useState(false);
+  // const [creatingCampaign, setCreatingCampaign] = useState(false);
   const [form] = Form.useForm();
-  const { initCrowdFundContractAddress } = useContractContext();
+  // const { initCrowdFundContractAddress } = useContractContext();
 
-  const handleCreateCampaign = async () => {
-    const notification = toast.loading("Please wait...Don't leave this page");
-    setCreatingCampaign(true);
-    console.log(Math.floor(new Date().getTime() / 1000.0));
-    console.log(Math.floor(new Date().getTime() / 1000.0) + 86400)
+  // const handleCreateCampaign = async () => {
+  //   const notification = toast.loading("Please wait...Don't leave this page");
+  //   setCreatingCampaign(true);
+  //   console.log(Math.floor(new Date().getTime() / 1000.0));
+  //   console.log(Math.floor(new Date().getTime() / 1000.0) + 86400)
 
-    try {
-      const contract = initCrowdFundContractAddress() as CrowdFundContract;
+  //   try {
+  //     const contract = initCrowdFundContractAddress() as CrowdFundContract;
 
-      const txHash = await contract.createCampaign(
-        "Education",
-        5000,
-        "School fees",
-        Math.floor(new Date().getTime() / 1000.0) + 1000,
-        Math.floor(new Date().getTime() / 1000.0) + 86400,
-        "Nigeria",
-        "https://ipfs.io/ipfs/QmTYEboq8raiBs7GTUg2yLXB3PMz6HuBNgNfSZBx5Msztg/robots.jpg"
-      );
-      const receipt = txHash.wait();
-      if (receipt) {
-        setCreatingCampaign(false);
-        toast.success("Campaign created successfully", {
-          id: notification,
-        });
-      }
-    } catch (error) {
-      console.log("error", error.message);
-      setCreatingCampaign(false);
-      toast.error("something went wrong", {
-        id: notification,
-      });
-    }
-  };
+  //     const txHash = await contract.createCampaign(
+  //       "Education",
+  //       5000,
+  //       "School fees",
+  //       Math.floor(new Date().getTime() / 1000.0) + 1000,
+  //       Math.floor(new Date().getTime() / 1000.0) + 86400,
+  //       "Nigeria",
+  //       "https://ipfs.io/ipfs/QmTYEboq8raiBs7GTUg2yLXB3PMz6HuBNgNfSZBx5Msztg/robots.jpg"
+  //     );
+  //     const receipt = txHash.wait();
+  //     if (receipt) {
+  //       setCreatingCampaign(false);
+  //       toast.success("Campaign created successfully", {
+  //         id: notification,
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.log("error", error.message);
+  //     setCreatingCampaign(false);
+  //     toast.error("something went wrong", {
+  //       id: notification,
+  //     });
+  //   }
+  // };
 
-  const handleSubmit = async (e: React.SyntheticEvent) => {
-    e.preventDefault();
+  // const handleSubmit = async (e: React.SyntheticEvent) => {
+  //   e.preventDefault();
 
-    const values = await form.validateFields();
+  //   const values = await form.validateFields();
 
-    console.log(values);
-  };
+  //   console.log(values);
+  // };
 
   return (
     <main className="bg-[#F5F5F5]">
@@ -124,7 +123,7 @@ const CampaignForm = () => {
               <div className="flex w-full justify-end">
                 <Button
                   // onClick={handleSubmit}
-                  onClick={handleCreateCampaign}
+                  // onClick={handleCreateCampaign}
                   className="mt-4 h-[43px] w-[96px] border-none bg-[#FF6B00] text-base text-white md:mt-6"
                 >
                   Next

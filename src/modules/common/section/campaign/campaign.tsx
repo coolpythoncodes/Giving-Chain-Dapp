@@ -36,6 +36,8 @@ const Campaigns = () => {
     },
   ];
 
+  const reversedCampaign = [...campaigns].reverse();
+
   return (
     <main className="bg-[#FCFCFC]">
       <div className="layout-container">
@@ -56,13 +58,15 @@ const Campaigns = () => {
             </Button>
           </Dropdown>
         </div>
-        <div className="xxl:grid-cols-4 grid grid-cols-1 gap-y-9  pt-12 md:grid-cols-2 md:gap-5 md:pb-[62px] md:pt-[62px] lg:grid-cols-3">
-          {campaigns?.map((item, index) => (
-            <Link key={`campaigns-${index}`} href="/campaign/women">
-              <CampaignCard campaign={item} />
-            </Link>
-          ))}
-        </div>
+        {campaigns.length ? (
+          <div className="xxl:grid-cols-4 grid grid-cols-1 gap-y-9  pt-12 md:grid-cols-2 md:gap-5 md:pb-[62px] md:pt-[62px] lg:grid-cols-3">
+            {reversedCampaign?.map((item, index) => (
+              <Link key={`campaigns-${index}`} href="/campaign/women">
+                <CampaignCard campaign={item} />
+              </Link>
+            ))}
+          </div>
+        ) : null}
       </div>
     </main>
   );

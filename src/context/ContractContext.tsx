@@ -1,7 +1,14 @@
 import { useConnectKit } from "@particle-network/connect-react-ui";
 import { ParticleProvider } from "@particle-network/provider";
 import { type Contract, ethers, type BigNumber } from "ethers";
-import { type ReactNode, useContext, createContext } from "react";
+import {
+  type ReactNode,
+  useContext,
+  createContext,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import {
   crowdFundABI,
   crowdFundContractAddress,
@@ -23,6 +30,8 @@ interface ContractContextInterface {
   getCampaignById: (campaignId: number) => Promise<ICampaigns>;
   getUSDCBalance: (address: AddressType) => Promise<BigNumber>;
   checkAllowanceBalance: (account: AddressType) => Promise<number>;
+  tokenBalance: number | undefined;
+  setTokenBalance: Dispatch<SetStateAction<number | undefined>>;
 }
 
 type ContractContextProviderProps = {
@@ -33,6 +42,7 @@ export interface CrowdFundContract extends Contract {
   getCampaigns(): Promise<ICampaigns[]>;
   getDonors(campaignId: number): Promise<IDonors[]>;
   campaigns(campaignId: number): Promise<ICampaigns>;
+  wait(): Promise<unknown>;
   createCampaign(
     category: string,
     goal: number,
@@ -42,6 +52,11 @@ export interface CrowdFundContract extends Contract {
     location: string,
     campaignImageUrl: string
   ): Promise<unknown>;
+  fundCampaign(
+    campaignId: number,
+    amount: BigNumber,
+    tip: BigNumber
+  ): Promise<unknown>;
 }
 
 export interface GiveChainTokenContract extends Contract {
@@ -49,7 +64,7 @@ export interface GiveChainTokenContract extends Contract {
   mint(): Promise<unknown>;
   wait(): Promise<unknown>;
   allowance(address: AddressType, address1: AddressType): Promise<BigNumber>;
-  approve(address: AddressType, amount: number): Promise<unknown>;
+  approve(address: AddressType, amount: BigNumber): Promise<unknown>;
 }
 
 const ContractContext = createContext<ContractContextInterface | null>(null);
@@ -57,6 +72,7 @@ const ContractContext = createContext<ContractContextInterface | null>(null);
 const ContractContextProvider = ({
   children,
 }: ContractContextProviderProps) => {
+  const [tokenBalance, setTokenBalance] = useState<number>();
   const { particle } = useConnectKit();
   const particleProvider = new ParticleProvider(particle.auth);
   const initCrowdFundContractAddress = () => {
@@ -127,6 +143,8 @@ const ContractContextProvider = ({
         getCampaignById,
         getUSDCBalance,
         checkAllowanceBalance,
+        tokenBalance,
+        setTokenBalance,
       }}
     >
       {children}

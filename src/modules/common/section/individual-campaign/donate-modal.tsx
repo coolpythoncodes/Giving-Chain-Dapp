@@ -1,20 +1,30 @@
 import { useAccount } from "@particle-network/connect-react-ui";
 import { Button, Form, Input, Modal } from "antd";
+import { type BigNumber } from "ethers";
 import numeral from "numeral";
-import React, { useEffect, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
+import { type CrowdFundContract } from "~/context/ContractContext";
 import {
   type GiveChainTokenContract,
   useContractContext,
 } from "~/context/ContractContext";
 import { crowdFundContractAddress } from "~/utils/data";
-import { parseToEther } from "~/utils/helper";
-import { type AddressType } from "~/utils/interface/contract.interface";
+import { formatUnit, parseToEther } from "~/utils/helper";
+import {
+  type IDonors,
+  type AddressType,
+  type ICampaigns,
+} from "~/utils/interface/contract.interface";
 
 interface IProps {
   showDonateModal: boolean;
   onComplete: () => void;
   fundraiser: AddressType;
+  campaignId: number;
+  setDonors: Dispatch<SetStateAction<IDonors[]>>;
+  setPercent: Dispatch<SetStateAction<number | undefined>>;
+  campaign: ICampaigns | undefined;
 }
 
 const initialFormData = {
@@ -22,30 +32,38 @@ const initialFormData = {
   donationTipAmount: null,
 };
 
-const DonateModal = ({ showDonateModal, onComplete, fundraiser }: IProps) => {
+const DonateModal = ({
+  showDonateModal,
+  onComplete,
+  fundraiser,
+  campaignId,
+  setDonors,
+  campaign,
+  setPercent,
+}: IProps) => {
   const [form] = Form.useForm();
-  const account = useAccount() as AddressType;
+  const account = useAccount();
 
-  const [donationAmount, setDonationAmount] = useState<number>(0);
-  const [donationTipAmount, setDonationTipAmount] = useState<number>(0);
-  const { initGiveChainTokenContractAddress, checkAllowanceBalance } =
-    useContractContext();
+  const [donationAmount, setDonationAmount] = useState<number>();
+  const [donationTipAmount, setDonationTipAmount] = useState<number>();
+  const {
+    initGiveChainTokenContractAddress,
+    initCrowdFundContractAddress,
+    checkAllowanceBalance,
+    getDonors,
+    getUSDCBalance,
+    setTokenBalance,
+    getCampaignById
+    
+  } = useContractContext();
   const [isApproving, setIsApproving] = useState(false);
   const [isCheckingAllowance, setIsCheckingAllowance] = useState(false);
   const [allowanceBalance, setAllowanceBalance] = useState<number>();
   const [isDonating, setIsDonating] = useState(false);
-  const [isApproved, setIsApproved] = useState<boolean | undefined>(false);
 
-  const handleApproval = async () => {
-    const values = (await form.validateFields()) as {
-      donationAmount: number;
-      donationTipAmount: number;
-    };
-    if (allowanceBalance) {
-      if (
-        allowanceBalance >=
-        values.donationAmount + values.donationTipAmount
-      ) {
+  const handleApproval = () => {
+    if (allowanceBalance && donationAmount && donationTipAmount) {
+      if (allowanceBalance >= +donationAmount + +donationTipAmount) {
         return true;
       } else {
         return false;
@@ -59,7 +77,7 @@ const DonateModal = ({ showDonateModal, onComplete, fundraiser }: IProps) => {
       donationTipAmount: number;
     };
     const amount = +values.donationAmount + +values.donationTipAmount;
-    // console.log("amount", parseToEther(amount));
+    console.log("amount", parseToEther(amount));
     setIsApproving(true);
     const notification = toast.loading(
       "Approving transaction.(Don't leave this page)"
@@ -69,11 +87,11 @@ const DonateModal = ({ showDonateModal, onComplete, fundraiser }: IProps) => {
         initGiveChainTokenContractAddress() as GiveChainTokenContract;
       const txHash = (await contract.approve(
         crowdFundContractAddress as AddressType,
-        parseToEther(+amount)
+        parseToEther(amount)
       )) as GiveChainTokenContract;
       const receipt = await txHash.wait();
       if (receipt) {
-        void checkAllowanceBalance(account).then((balance) => {
+        void checkAllowanceBalance(account as AddressType).then((balance) => {
           setAllowanceBalance(balance);
         });
         toast.success(`Approval of Usdc ${amount} was successful`, {
@@ -85,34 +103,61 @@ const DonateModal = ({ showDonateModal, onComplete, fundraiser }: IProps) => {
       toast.error("Something went wrong", {
         id: notification,
       });
-      console.log(error);
       setIsApproving(false);
     }
   };
 
-  const handleSubmit = async (e: React.SyntheticEvent) => {
-    e.preventDefault();
+  const handleDonate = async () => {
+    setIsDonating(true);
+    const notification = toast.loading("Donating.(Don't leave this page)");
+    try {
+      const contract = initCrowdFundContractAddress() as CrowdFundContract;
+      const txHash = (await contract.fundCampaign(
+        campaignId,
+        parseToEther(donationAmount as number),
+        parseToEther(donationTipAmount as number)
+      )) as CrowdFundContract;
+      const receipt = await txHash.wait();
+      if (receipt) {
+        const thisCampaign = await getCampaignById(campaignId)
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        getUSDCBalance(account as AddressType).then((res) => {
+          const balance = formatUnit(res);
+          setTokenBalance(balance);
+        });
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        getDonors(campaign?.campaignId as BigNumber).then((res: IDonors[]) =>
+          setDonors(res)
+        );
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const values = await form.validateFields();
+        const percentValue = Math.round(
+          (formatUnit(thisCampaign?.amountRaised) /
+            (formatUnit(campaign?.goal as BigNumber) * 10 ** 18)) *
+            100
+        );
+        setPercent(percentValue);
 
-    console.log(values);
+        toast.success("Donation was successful", {
+          id: notification,
+        });
+        setIsDonating(false);
+      }
+    } catch (error) {
+      toast.error("Something went wrong", {
+        id: notification,
+      });
+      console.log(error);
+      setIsDonating(false);
+    }
   };
 
   useEffect(() => {
     if (account) {
       setIsCheckingAllowance(true);
-      void checkAllowanceBalance(account).then((balance) => {
+      void checkAllowanceBalance(account as AddressType).then((balance) => {
         setAllowanceBalance(balance);
         setIsCheckingAllowance(false);
       });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account]);
-
-  useEffect(() => {
-    if (account) {
-      void handleApproval().then((res) => setIsApproved(res));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account]);
@@ -186,18 +231,21 @@ const DonateModal = ({ showDonateModal, onComplete, fundraiser }: IProps) => {
             </div>
             <div className="flex items-center justify-between border-t border-[#D0D5DD] py-5">
               <p>Total due today</p>
-              <p>
-                {numeral(donationAmount + donationTipAmount).format(",")}{" "}
-                &nbsp;USDC
-              </p>
+              {donationAmount && donationTipAmount ? (
+                <p>
+                  {numeral(+donationAmount + +donationTipAmount).format(",")}{" "}
+                  &nbsp;USDC
+                </p>
+              ) : null}
             </div>
           </div>
         </div>
         <>
           {isCheckingAllowance ? null : (
             <>
-              {isApproved ? (
+              {handleApproval() ? (
                 <Button
+                  onClick={handleDonate as VoidFunction}
                   loading={isDonating}
                   disabled={isDonating}
                   className="mt-5 h-[50px] w-full border-none bg-[#FF6B00] text-base text-white"
@@ -208,25 +256,17 @@ const DonateModal = ({ showDonateModal, onComplete, fundraiser }: IProps) => {
             </>
           )}
         </>
-
-        {/* <Button
-          className="mt-5 h-[50px] w-full border-none bg-[#FF6B00] text-base text-white"
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          onClick={handleApproveTransaction}
-        >
-          Approve
-        </Button> */}
       </Form>
       <>
         {isCheckingAllowance ? (
           <p className="text-center">Checking for Approval...</p>
         ) : (
           <>
-            {!isApproved ? (
+            {!handleApproval() ? (
               <Button
-                onClick={handleApproveTransaction}
+                disabled={isApproving}
                 loading={isApproving}
-                disabled={isApproved}
+                onClick={handleApproveTransaction as VoidFunction}
                 className="mt-5 h-[50px] w-full border-none bg-[#FF6B00] text-base text-white disabled:bg-gray-500"
               >
                 Approve
