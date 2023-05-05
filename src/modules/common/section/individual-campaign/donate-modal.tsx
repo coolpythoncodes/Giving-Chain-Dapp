@@ -77,7 +77,6 @@ const DonateModal = ({
       donationTipAmount: number;
     };
     const amount = +values.donationAmount + +values.donationTipAmount;
-    console.log("amount", parseToEther(amount));
     setIsApproving(true);
     const notification = toast.loading(
       "Approving transaction.(Don't leave this page)"
@@ -146,7 +145,6 @@ const DonateModal = ({
       toast.error("Something went wrong", {
         id: notification,
       });
-      console.log(error);
       setIsDonating(false);
     }
   };

@@ -8,13 +8,14 @@ import {
   type ICampaigns,
   type AddressType,
 } from "~/utils/interface/contract.interface";
-import { formatUnit } from "~/utils/helper";
+import { covertToReadableDate, formatUnit } from "~/utils/helper";
 import {
   type GiveChainTokenContract,
   useContractContext,
 } from "~/context/ContractContext";
 import { useAccount } from "@particle-network/connect-react-ui";
 import { toast } from "react-hot-toast";
+import ReactTimeAgo from "react-time-ago";
 
 type GoalsProps = {
   campaign: ICampaigns | undefined;
@@ -66,9 +67,7 @@ const Goals = ({ campaign, campaignId }: GoalsProps) => {
   useEffect(() => {
     if (campaign) {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      getDonors(campaign?.campaignId).then((res: IDonors[]) =>
-        setDonors(res)
-      );
+      getDonors(campaign?.campaignId).then((res: IDonors[]) => setDonors(res));
 
       const percentValue = Math.round(
         (formatUnit(campaign?.amountRaised) /
@@ -90,7 +89,6 @@ const Goals = ({ campaign, campaignId }: GoalsProps) => {
   //   }
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, [account]);
-  console.log("donors", donors);
 
   return campaign ? (
     <div className="donation-goals">
@@ -108,7 +106,7 @@ const Goals = ({ campaign, campaignId }: GoalsProps) => {
           <p className="text-[14px]">{donors.length} donations</p>
           <p>Your USDC balance: {numeral(tokenBalance).format(",")}</p>
         </div>
-        <div className="donate-btn-container pb-10">
+        <div className="donate-btn-container border-b border-gray-500 pb-5">
           <Button
             className="mb-4 h-[50px] w-full border-none bg-[#FF6B00] text-base text-white"
             onClick={() => setShowDonateModal(true)}
@@ -123,6 +121,29 @@ const Goals = ({ campaign, campaignId }: GoalsProps) => {
           >
             Mint
           </Button>
+        </div>
+
+        <div className="space-y-4 pt-5 h-[300px] overflow-y-auto">
+          {donors?.map((item, index) => (
+            <div key={`donors-${index}`}>
+              <p className="">{item?.donorAddress}</p>
+              <div className="flex items-center">
+                <p className="font-bold">
+                  {numeral(formatUnit(item?.amount)).format(",")} USDC
+                </p>
+                *
+                <p className="">
+                  {covertToReadableDate(
+                    formatUnit(item?.timestamp) * 10 ** 18
+                  ) ? (
+                    <ReactTimeAgo
+                      date={formatUnit(item?.timestamp) * 10 ** 18 * 1000}
+                    />
+                  ) : null}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
       {/* <div>

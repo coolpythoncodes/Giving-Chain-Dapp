@@ -88,7 +88,6 @@ const IndividualCampaign = ({ campaignId }: IndividualCampaignProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account]);
 
-  // console.log(campaign.);
 
   return campaign ? (
     <main className="bg-[#FCFCFC]">

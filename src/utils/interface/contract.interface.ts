@@ -19,6 +19,6 @@ export interface ICampaigns {
 
 export interface IDonors {
   amount: BigNumber;
-  timestamp: string;
+  timestamp: BigNumber;
   donorAddress: AddressType;
 }

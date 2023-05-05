@@ -11,6 +11,13 @@ import { Space_Grotesk } from "next/font/google";
 import "~/styles/globals.css";
 import { ContractContextProvider } from "~/context/ContractContext";
 import { Toaster } from "react-hot-toast";
+import TimeAgo from 'javascript-time-ago'
+
+import en from 'javascript-time-ago/locale/en.json'
+import ru from 'javascript-time-ago/locale/ru.json'
+
+TimeAgo.addDefaultLocale(en)
+TimeAgo.addLocale(ru)
 
 const space = Space_Grotesk({ subsets: ["latin"], variable: "--font-space" });
 
