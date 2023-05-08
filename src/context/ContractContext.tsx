@@ -57,6 +57,7 @@ export interface CrowdFundContract extends Contract {
     amount: BigNumber,
     tip: BigNumber
   ): Promise<unknown>;
+  claim(campaignId:number): Promise<unknown>
 }
 
 export interface GiveChainTokenContract extends Contract {
