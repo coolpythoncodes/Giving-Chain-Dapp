@@ -1,6 +1,9 @@
-export const routes = {
-    fundraise: '/',
-    ticketSales: '/',
-    lunch: '/',
-    supportCreator: '/'
-}
+export const generalRoutes = {
+  createCampaign: "/create-campaign",
+  yourCampaign: "/your-campaign",
+  campaign: "/campaign",
+  fundraise: "/campaign",
+  lunch: "/lunch",
+  ticketSales: "/ticketSales",
+  supportCreator: "/supportCreator",
+};

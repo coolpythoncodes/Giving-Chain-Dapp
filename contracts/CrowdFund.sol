@@ -10,10 +10,8 @@ import {DataTypes} from "./libraries/DataTypes.sol";
 import {Constants} from "./libraries/Constants.sol";
 import {
     ErrGoalZero,
-    ErrStartAtInPast,
     ErrEndAtBeforeStartAt,
     ErrExceedMaxRaisedDuration,
-    ErrCampaignHasNotStarted,
     ErrCampaignHasEnded,
     ErrAmountZero,
     ErrInsufficientTokenBalance,
@@ -42,16 +40,14 @@ contract CrowdFund is Ownable{
         token = IERC20(_address);
     }
 
-    function createCampaign(string calldata _category, uint _goal,string calldata _description, uint _startAt, uint _endAt, string calldata _location,string calldata _campaignImageUrl ) external  {
+    function createCampaign(string calldata _category, uint _goal,string calldata _description, string memory _title, uint _endAt, string calldata _location,string calldata _campaignImageUrl ) external  {
 
         // check if goal of campaign is zero
         if (_goal <= 0) revert ErrGoalZero();
 
-        // check if startAt of campaign is in past
-        if (_startAt <= block.timestamp) revert ErrStartAtInPast();
 
-        // check if endAt is before startAt
-        if(_endAt < _startAt) revert ErrEndAtBeforeStartAt();
+        // check if endAt is before createAt
+        if(_endAt < block.timestamp) revert ErrEndAtBeforeStartAt();
 
         // check if endAt exceed max raise duration
         if (_endAt >= block.timestamp + Constants.MAX_RAISE_DURATION) revert ErrExceedMaxRaisedDuration();
@@ -59,7 +55,7 @@ contract CrowdFund is Ownable{
         uint newCampaignId = campaignId.current();
         campaigns[newCampaignId] = DataTypes.Campaign({
             campaignId: newCampaignId,
-            startAt: _startAt,
+            createdAt: block.timestamp,
             endAt: _endAt,
             category: _category,
             fundraiser: msg.sender,
@@ -68,18 +64,16 @@ contract CrowdFund is Ownable{
             claimed: false,
             description: _description,
             location: _location,
-            campaignImageUrl: _campaignImageUrl
+            campaignImageUrl: _campaignImageUrl,
+            title: _title
         });
 
         campaignId.increment();
-        emit Events.CreateCampaign(newCampaignId,msg.sender, _goal, _startAt, _endAt );
+        emit Events.CreateCampaign(newCampaignId,msg.sender, _goal, block.timestamp, _endAt );
     }
 
     function fundCampaign(uint _campaignId, uint _amount, uint tip)  external {
         DataTypes.Campaign storage campaign = campaigns[_campaignId];
-
-        // check if campaign has started
-        if (campaign.startAt >= block.timestamp) revert ErrCampaignHasNotStarted();
 
         // check if campaign has ended
         if (campaign.endAt <= block.timestamp) revert ErrCampaignHasEnded();
@@ -130,20 +124,6 @@ contract CrowdFund is Ownable{
         emit Events.WithdrawTips(totalTip);
     }
 
-    function cancelCampaign(uint _campaignId) external {
-        DataTypes.Campaign memory campaign = campaigns[_campaignId];
-
-        // check if msg.sender is caller
-        if (msg.sender != campaign.fundraiser) revert ErrCallerNotFundRaiser();
-
-        // check if campaign has started
-        if (block.timestamp > campaign.startAt) revert ErrCampaignHasNotStarted();
-
-        delete campaigns[_campaignId];
-
-        emit Events.CancelCampaign(_campaignId);
-    }
-
     function getCampaigns() external view returns (DataTypes.Campaign[] memory) {
         uint campaignCount = campaignId.current();
         DataTypes.Campaign[] memory  allCampaigns = new DataTypes.Campaign[](campaignCount);
@@ -165,9 +145,6 @@ contract CrowdFund is Ownable{
 
         // check if msg.sender is caller
         if (msg.sender != campaign.fundraiser) revert ErrCallerNotFundRaiser();
-
-        // check if campaign has started
-        if (campaign.startAt >= block.timestamp) revert ErrCampaignHasNotStarted();
 
         // check if campaign has ended
         if (campaign.endAt <= block.timestamp) revert ErrCampaignHasEnded();
@@ -191,8 +168,6 @@ contract CrowdFund is Ownable{
     function createWordOfSupport(uint _campaignId, string calldata _supportWord) external {
             DataTypes.Campaign memory campaign = campaigns[_campaignId];
 
-        // check if campaign has started
-        if (campaign.startAt >= block.timestamp) revert ErrCampaignHasNotStarted();
 
         // check if campaign has ended
         if (campaign.endAt <= block.timestamp) revert ErrCampaignHasEnded();

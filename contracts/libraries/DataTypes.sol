@@ -8,8 +8,9 @@ library DataTypes {
     }
 
     struct Campaign {
+        string title;
         uint campaignId;
-        uint startAt;
+        uint createdAt;
         uint endAt;
         string category;
         address fundraiser;
