@@ -23,6 +23,7 @@
     "@walletconnect/ethereum-provider": "1.8.0",
     "@web3modal/ethereum": "^2.3.6",
     "antd": "^5.4.4",
+    "axios": "^1.4.0",
     "javascript-time-ago": "^2.5.9",
     "next": "^13.2.4",
     "numeral": "^2.0.6",
