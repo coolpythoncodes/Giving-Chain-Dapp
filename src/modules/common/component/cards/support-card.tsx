@@ -1,9 +1,7 @@
-import React from "react";
 import { UserOutlined } from "@ant-design/icons";
-import { formatUnit } from "~/utils/helper";
 import numeral from "numeral";
-
-// import { type BigNumber } from "ethers";
+import { useAccount } from "@particle-network/connect-react-ui";
+import { type AddressType } from "~/utils/interface/contract.interface";
 
 interface IProps {
   name: string;
@@ -15,6 +13,7 @@ interface IProps {
 
 const SupportCard = (props: IProps) => {
   const { name, amount, date, location, description } = props;
+  const account = useAccount() as AddressType;
   return (
     <section className="mt-7 flex w-full items-start justify-start ">
       <div
@@ -29,16 +28,18 @@ const SupportCard = (props: IProps) => {
         />
       </div>
       <div className="ml-5 w-full">
-        <h3 className="mb-[6px] text-base font-bold">{name}</h3>
+        <h3 className="mb-[6px] text-base font-bold">
+          {name.toLowerCase() === account.toLowerCase() ? "You" : name}
+        </h3>
         {amount && (
           <div>
-            <div className="flex w-[full] items-center justify-start mb-[6px] text-[14px]">
+            <div className="mb-[6px] flex w-[full] items-center justify-start text-[14px]">
               {/* <p>{numeral(formatUnit(amount)).format(",")} USDC</p> */}
               <span className="flex justify-start py-0">
                 <p>{numeral(amount).format(",")}</p>
                 <p className="ml-[2px]"> USDC</p>
               </span>
-              <div className="w-[5px] h-[5px] rounded-[50%] bg-[#D0D5DD] mx-5"/>
+              <div className="mx-5 h-[5px] w-[5px] rounded-[50%] bg-[#D0D5DD]" />
               <p>{date}</p>
             </div>
             <p className="text-[14px]">{description}</p>

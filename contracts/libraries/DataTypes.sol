@@ -25,6 +25,7 @@ library DataTypes {
     struct WordsOfSupport {
         string supportWord;
         uint timestamp;
+        address donor;
     }
 
     struct Donor{
