@@ -98,6 +98,11 @@ const IndividualCampaign = ({ campaignId }: IndividualCampaignProps) => {
       return;
     }
 
+    if (campaign?.claimed) {
+      toast.error("The funds of this campaign has been withdrawed");
+      return;
+    }
+
     const notification = toast.loading("Withdrawing campaign funds.");
     try {
       const contract = initCrowdFundContractAddress() as CrowdFundContract;
