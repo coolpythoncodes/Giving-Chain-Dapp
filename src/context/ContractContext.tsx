@@ -21,6 +21,7 @@ import {
   type AddressType,
   type ICampaigns,
   type IDonors,
+  type ICampaignUpdate,
 } from "~/utils/interface/contract.interface";
 
 interface ContractContextInterface {
@@ -34,6 +35,7 @@ interface ContractContextInterface {
   tokenBalance: number | undefined;
   setTokenBalance: Dispatch<SetStateAction<number | undefined>>;
   getWordsOfSupport: (campaignId: number) => Promise<IWordsOfSupport[]>;
+  getCampaignUpdate: (campaignId: number) => Promise<ICampaignUpdate[]>;
 }
 
 type ContractContextProviderProps = {
@@ -64,6 +66,11 @@ export interface CrowdFundContract extends Contract {
   createWordOfSupport(
     campaignId: number,
     supportWord: string
+  ): Promise<unknown>;
+  getCampaignUpdate(campaignId: number): Promise<ICampaignUpdate[]>;
+  createCampaignUpdate(
+    campaignId: number,
+    description: string
   ): Promise<unknown>;
 }
 
@@ -137,6 +144,12 @@ const ContractContextProvider = ({
     return result;
   };
 
+  const getCampaignUpdate = async (campaignId: number) => {
+    const contract = initCrowdFundContractAddress() as CrowdFundContract;
+    const result = await contract.getCampaignUpdate(campaignId);
+    return result;
+  };
+
   const checkAllowanceBalance = async (account: AddressType) => {
     const contract =
       initGiveChainTokenContractAddress() as GiveChainTokenContract;
@@ -160,6 +173,7 @@ const ContractContextProvider = ({
         checkAllowanceBalance,
         tokenBalance,
         setTokenBalance,
+        getCampaignUpdate,
       }}
     >
       {children}

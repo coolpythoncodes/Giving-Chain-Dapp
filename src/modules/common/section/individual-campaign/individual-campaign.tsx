@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
-import { TagOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import { TagOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import Organisers from "./organisers";
 import WordsOfSupport from "./words-of-support";
@@ -16,6 +16,7 @@ import {
   type IDonors,
   type ICampaigns,
   type AddressType,
+  type ICampaignUpdate,
 } from "~/utils/interface/contract.interface";
 import { toast } from "react-hot-toast";
 import {
@@ -24,6 +25,7 @@ import {
   hasCampaignEnded,
 } from "~/utils/helper";
 import { type BigNumber } from "ethers";
+import ReactTimeAgo from "react-time-ago";
 
 type IndividualCampaignProps = {
   campaignId: number;
@@ -37,6 +39,9 @@ const IndividualCampaign = ({ campaignId }: IndividualCampaignProps) => {
   const [percent, setPercent] = useState<number>();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [donors, setDonors] = useState<IDonors[]>([]);
+  const [campaignUpdates, setCampaignUpdates] = useState<ICampaignUpdate[]>([]);
+  const [campaignUpdateText, setCampaignUpdateText] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
     getCampaignById,
@@ -44,6 +49,7 @@ const IndividualCampaign = ({ campaignId }: IndividualCampaignProps) => {
     initCrowdFundContractAddress,
     getUSDCBalance,
     setTokenBalance,
+    getCampaignUpdate,
   } = useContractContext();
 
   const account = useAccount();
@@ -59,8 +65,7 @@ const IndividualCampaign = ({ campaignId }: IndividualCampaignProps) => {
       const txHash = (await contract.mint()) as GiveChainTokenContract;
       const receipt = await txHash.wait();
       if (receipt) {
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        getUSDCBalance(account as AddressType).then((res) => {
+        void getUSDCBalance(account as AddressType).then((res) => {
           const balance = formatUnit(res);
           setTokenBalance(balance);
         });
@@ -99,12 +104,40 @@ const IndividualCampaign = ({ campaignId }: IndividualCampaignProps) => {
       const txHash = (await contract.claim(campaignId)) as CrowdFundContract;
       const receipt = await txHash.wait();
       if (receipt) {
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        getUSDCBalance(account as AddressType).then((res) => {
+        void getUSDCBalance(account as AddressType).then((res) => {
           const balance = formatUnit(res);
           setTokenBalance(balance);
         });
         toast.success("Campaign funds withdrawal was successfull", {
+          id: notification,
+        });
+      }
+    } catch (error) {
+      toast.error("Opps, something went wrong", {
+        id: notification,
+      });
+    }
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const notification = toast.loading("Submitting campaign update");
+    try {
+      const contract = initCrowdFundContractAddress() as CrowdFundContract;
+      const txHash = (await contract.createCampaignUpdate(
+        campaignId,
+        campaignUpdateText
+      )) as CrowdFundContract;
+      const receipt = await txHash.wait();
+      if (receipt) {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        getCampaignUpdate(campaignId).then((res: ICampaignUpdate[]) =>
+          setCampaignUpdates(res)
+        );
+        setCampaignUpdateText("");
+        setIsSubmitting(false);
+        toast.success("submission was successfull", {
           id: notification,
         });
       }
@@ -122,6 +155,16 @@ const IndividualCampaign = ({ campaignId }: IndividualCampaignProps) => {
         setTokenBalance(balance);
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account]);
+
+  useEffect(() => {
+    if (account) {
+      void getCampaignUpdate(campaignId).then((res: ICampaignUpdate[]) =>
+        setCampaignUpdates(res)
+      );
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account]);
 
@@ -190,6 +233,56 @@ const IndividualCampaign = ({ campaignId }: IndividualCampaignProps) => {
               fundraiser={campaign.fundraiser}
               location={campaign.location}
             />
+            {campaign?.fundraiser.toLowerCase() === account?.toLowerCase() ? (
+              <div className="mt-5 font-bold">
+                <h1>Share Updates about the campaign</h1>
+                {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+                <form onSubmit={handleSubmit} className="mt-5">
+                  <textarea
+                    name="campaignUpdate"
+                    placeholder="Share Updates about the campaign"
+                    required
+                    className="mt-4 w-full"
+                    onChange={(e) => setCampaignUpdateText(e.target.value)}
+                  />
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="mt-5 h-[50px] w-full border-none bg-[#FF6B00] text-base text-white"
+                  >
+                    Submit
+                  </button>
+                </form>
+              </div>
+            ) : null}
+            {campaignUpdates.length > 0 ? (
+              <div className="mt-5">
+                <h1 className="mb-3 text-xl font-bold">
+                  Updates ({campaignUpdates.length})
+                </h1>
+                <div className="space-y-5">
+                  {campaignUpdates?.map((item, index) => (
+                    <div key={`campaign-updates-${index}`}>
+                      <div className="mb-3 flex items-center gap-x-2">
+                        <p className="font-bold">
+                          {covertToReadableDate(
+                            formatUnit(item?.timestamp) * 10 ** 18
+                          ) ? (
+                            <ReactTimeAgo
+                              date={
+                                formatUnit(item?.timestamp) * 10 ** 18 * 1000
+                              }
+                            />
+                          ) : null}{" "}
+                        </p>
+                        <p>by {campaign?.fundraiser}</p>
+                      </div>
+                      <p>{item?.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
             <WordsOfSupport {...{ campaignId, campaign }} />
           </div>
           <div className="donation-goals-con hidden md:block md:w-[35%]">
