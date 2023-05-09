@@ -14,5 +14,8 @@ export const covertToReadableDate = (value: number) => {
 
 export const currentEpochTime = Math.floor(new Date().getTime() / 1000.0);
 
-export const hasCampaignEnded = (endAt: BigNumber) =>
-  currentEpochTime > formatUnit(endAt) * 10 ** 18;
+export const hasCampaignEnded = (endAt: BigNumber) =>{
+  const _formattedValue =  formatUnit(endAt) * 10 ** 18
+  return currentEpochTime > _formattedValue
+}
+

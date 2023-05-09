@@ -196,10 +196,10 @@ const IndividualCampaign = ({ campaignId }: IndividualCampaignProps) => {
             <Goals {...{ campaign, campaignId }} />
           </div>
         </div>
-        <div className="my-10 flex items-center justify-start">
+        {/* <div className="my-10 flex items-center justify-start">
           <InfoCircleOutlined className="text-[14px]" />
           <p className="ml-[4px] text-[14px]">Report fundraiser</p>
-        </div>
+        </div> */}
       </div>
 
       <DonateModal

@@ -31,6 +31,9 @@ const WordsOfSupport = ({ campaignId, campaign }: WordsOfSupportProps) => {
   const isDonor = donors.filter(
     (item) => item.donorAddress.toLowerCase() === account.toLowerCase()
   );
+
+  const reversedwordsOfSupport = [...wordsOfSupport].reverse();
+
   useEffect(() => {
     if (campaignId) {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -57,7 +60,7 @@ const WordsOfSupport = ({ campaignId, campaign }: WordsOfSupportProps) => {
         getWordsOfSupport(campaignId).then((res: IWordsOfSupport[]) =>
           setWordsOfSupport(res)
         );
-        setSupportWord('')
+        setSupportWord("");
         setIsSubmitting(false);
         toast.success("submission was successfull", {
           id: notification,
@@ -81,7 +84,7 @@ const WordsOfSupport = ({ campaignId, campaign }: WordsOfSupportProps) => {
   return (
     <div className="w-full border-b border-[#D0D5DD] py-10">
       <h1 className="mb-4 text-xl font-bold md:text-2xl">
-        Words of support ({wordsOfSupport.length})
+        Words of support ({reversedwordsOfSupport.length})
       </h1>
 
       <p>Please donate to share words of support.</p>
@@ -106,7 +109,7 @@ const WordsOfSupport = ({ campaignId, campaign }: WordsOfSupportProps) => {
       ) : null}
 
       <div className="mt-5 space-y-5">
-        {wordsOfSupport?.map((item, index) => (
+        {reversedwordsOfSupport?.map((item, index) => (
           <div key={`words-of-support-${index}`} className="flex gap-x-5">
             <div className="flex h-[40px] w-[40px] items-center justify-center rounded-[50%] bg-[#E6F6EF]">
               <UserOutlined className="text-[25px] text-[#458E52]" />
