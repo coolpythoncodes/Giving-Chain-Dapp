@@ -23,7 +23,7 @@
 ### Brief Description
 Giving Chain is a crowdfunding platform built on Binance smart chain. 
 It allows users to easily support their favorite campaigns and causes with ease. 
-With Give Chain, Campaign owners can create and manage their campaigns, and have complete control over the funds raised. 
+With Giving Chain, Campaign owners can create and manage their campaigns, and have complete control over the funds raised. 
 By leveraging the power of blockchain technology, Giving Chain ensures that every donation is secure, transparent, and immutable. Join us in revolutionizing the world of charitable giving with Giving Chain! This project is purely supported by tips given by donors when supporting a campaign.
 
 ### Use case
@@ -32,7 +32,7 @@ Giving Chain is to provide a decentralized and transparent crowdfunding platform
 
 ### Particle Network's SDK integration.
 
-Particle Network's SDK was used to provide social login authentication functionality to the Giving Chain platform. This can be achieved by integrating with the social media platforms used by Give Chain users, such as Facebook, Google, Discord, Github etc. The SDK can enable Give Chain to securely authenticate users through these platforms, allowing users to easily and securely log in to the platform. This ensures that web2 users can easily interact with the platform.
+Particle Network's SDK was used to provide social login authentication functionality to the Giving Chain platform. This can be achieved by integrating with the social media platforms used by Giving Chain users, such as Facebook, Google, Discord, Github etc. The SDK can enable Giving Chain to securely authenticate users through these platforms, allowing users to easily and securely log in to the platform. This ensures that web2 users can easily interact with the platform.
 
 Particle Network's SDK was also used to provide decentralized storage functionality to the Giving Chain platform. Giving Chain used the SDK to securely store data related to campaigns, such as images that describes the campaign, ensuring that the data is tamper-proof and transparent.
 
