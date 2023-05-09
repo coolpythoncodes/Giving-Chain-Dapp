@@ -91,8 +91,8 @@ Give a ⭐ if you like this project!
 - [BNB Faucet](https://testnet.bnbchain.org/faucet-smart)
 - [Particle network](https://particle.network/)
 - [BSC scan api key](https://bscscan.com/myapikey)
-- [Verified Giving Chain Token address on BSC scan](https://testnet.bscscan.com/address/0x7bcc9c9ec80b96e6a92287e2333f78490b0570c4#code)
-- [Verified Crowd Fund address on BSC scan](https://testnet.bscscan.com/address/0x80B67a86fada64DCeE4153E5d57b7e2E599aA810#code)
+- [Verified Giving Chain Token address on BSC scan](https://testnet.bscscan.com/address/0x1A99D6C14c0fF2A0B5A6a3c1244862E2cDa45eC5#code)
+- [Verified Crowd Fund address on BSC scan](https://testnet.bscscan.com/address/0xa95735fA11707298417e92D5963a6E3faF1c32c7#code)
 
 [contributors-shield]: https://img.shields.io/github/contributors/coolpythoncodes/Giving-Chain-Dapp?style=for-the-badge
 [contributors-url]: https://github.com/coolpythoncodes/Giving-Chain-Dapp/graphs/contributors

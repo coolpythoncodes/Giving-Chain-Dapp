@@ -34,21 +34,21 @@ async function main() {
   const startAt = block.timestamp;
 
   // create campaigns
-  for (let i = 0; i < campaigns.length; i++) {
-    const tx =  await crowdFund
-      .connect(deployer)
-      .createCampaign(
-        campaigns[i].category,
-        campaigns[i].goal,
-        campaigns[i].description,
-        campaigns[i].title,
-        startAt + campaigns[i]._startAt + 86400,
-        campaigns[i]._loactions,
-        campaigns[i]._campaignImageUrl
-      );
+  // for (let i = 0; i < campaigns.length; i++) {
+  //   const tx =  await crowdFund
+  //     .connect(deployer)
+  //     .createCampaign(
+  //       campaigns[i].category,
+  //       campaigns[i].goal,
+  //       campaigns[i].description,
+  //       campaigns[i].title,
+  //       startAt + campaigns[i]._startAt + 86400,
+  //       campaigns[i]._loactions,
+  //       campaigns[i]._campaignImageUrl
+  //     );
 
-    await tx.wait();
-  }
+  //   await tx.wait();
+  // }
 }
 
 // We recommend this pattern to be able to use async/await everywhere
