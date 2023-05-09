@@ -22,3 +22,10 @@ export interface IDonors {
   timestamp: BigNumber;
   donorAddress: AddressType;
 }
+
+export interface IWordsOfSupport {
+  supportWord: string;
+  timestamp: BigNumber;
+  donor: AddressType;
+
+}

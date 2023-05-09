@@ -17,6 +17,7 @@ import {
 } from "~/utils/data";
 import { formatUnit } from "~/utils/helper";
 import {
+  type IWordsOfSupport,
   type AddressType,
   type ICampaigns,
   type IDonors,
@@ -32,6 +33,7 @@ interface ContractContextInterface {
   checkAllowanceBalance: (account: AddressType) => Promise<number>;
   tokenBalance: number | undefined;
   setTokenBalance: Dispatch<SetStateAction<number | undefined>>;
+  getWordsOfSupport: (campaignId: number) => Promise<IWordsOfSupport[]>;
 }
 
 type ContractContextProviderProps = {
@@ -57,7 +59,12 @@ export interface CrowdFundContract extends Contract {
     amount: BigNumber,
     tip: BigNumber
   ): Promise<unknown>;
-  claim(campaignId:number): Promise<unknown>
+  claim(campaignId: number): Promise<unknown>;
+  getWordsOfSupport(campaignId: number): Promise<IWordsOfSupport[]>;
+  createWordOfSupport(
+    campaignId: number,
+    supportWord: string
+  ): Promise<unknown>;
 }
 
 export interface GiveChainTokenContract extends Contract {
@@ -124,6 +131,12 @@ const ContractContextProvider = ({
     return result;
   };
 
+  const getWordsOfSupport = async (campaignId: number) => {
+    const contract = initCrowdFundContractAddress() as CrowdFundContract;
+    const result = await contract.getWordsOfSupport(campaignId);
+    return result;
+  };
+
   const checkAllowanceBalance = async (account: AddressType) => {
     const contract =
       initGiveChainTokenContractAddress() as GiveChainTokenContract;
@@ -137,6 +150,7 @@ const ContractContextProvider = ({
   return (
     <ContractContext.Provider
       value={{
+        getWordsOfSupport,
         initCrowdFundContractAddress,
         initGiveChainTokenContractAddress,
         getCampaign,

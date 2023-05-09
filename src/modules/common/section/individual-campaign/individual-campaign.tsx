@@ -190,7 +190,7 @@ const IndividualCampaign = ({ campaignId }: IndividualCampaignProps) => {
               fundraiser={campaign.fundraiser}
               location={campaign.location}
             />
-            <WordsOfSupport />
+            <WordsOfSupport {...{ campaignId, campaign }} />
           </div>
           <div className="donation-goals-con hidden md:block md:w-[35%]">
             <Goals {...{ campaign, campaignId }} />

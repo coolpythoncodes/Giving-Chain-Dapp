@@ -179,7 +179,8 @@ contract CrowdFund is Ownable{
  
         wordsOfSupport[_campaignId].push(DataTypes.WordsOfSupport({
             supportWord: _supportWord,
-            timestamp: block.timestamp
+            timestamp: block.timestamp,
+            donor: msg.sender
         }));
 
         emit Events.CreateWordOfSupport(_campaignId);
