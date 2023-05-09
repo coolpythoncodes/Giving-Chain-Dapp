@@ -17,9 +17,11 @@ import {
 } from "~/utils/data";
 import { formatUnit } from "~/utils/helper";
 import {
+  type IWordsOfSupport,
   type AddressType,
   type ICampaigns,
   type IDonors,
+  type ICampaignUpdate,
 } from "~/utils/interface/contract.interface";
 
 interface ContractContextInterface {
@@ -32,6 +34,8 @@ interface ContractContextInterface {
   checkAllowanceBalance: (account: AddressType) => Promise<number>;
   tokenBalance: number | undefined;
   setTokenBalance: Dispatch<SetStateAction<number | undefined>>;
+  getWordsOfSupport: (campaignId: number) => Promise<IWordsOfSupport[]>;
+  getCampaignUpdate: (campaignId: number) => Promise<ICampaignUpdate[]>;
 }
 
 type ContractContextProviderProps = {
@@ -56,6 +60,17 @@ export interface CrowdFundContract extends Contract {
     campaignId: number,
     amount: BigNumber,
     tip: BigNumber
+  ): Promise<unknown>;
+  claim(campaignId: number): Promise<unknown>;
+  getWordsOfSupport(campaignId: number): Promise<IWordsOfSupport[]>;
+  createWordOfSupport(
+    campaignId: number,
+    supportWord: string
+  ): Promise<unknown>;
+  getCampaignUpdate(campaignId: number): Promise<ICampaignUpdate[]>;
+  createCampaignUpdate(
+    campaignId: number,
+    description: string
   ): Promise<unknown>;
 }
 
@@ -123,6 +138,18 @@ const ContractContextProvider = ({
     return result;
   };
 
+  const getWordsOfSupport = async (campaignId: number) => {
+    const contract = initCrowdFundContractAddress() as CrowdFundContract;
+    const result = await contract.getWordsOfSupport(campaignId);
+    return result;
+  };
+
+  const getCampaignUpdate = async (campaignId: number) => {
+    const contract = initCrowdFundContractAddress() as CrowdFundContract;
+    const result = await contract.getCampaignUpdate(campaignId);
+    return result;
+  };
+
   const checkAllowanceBalance = async (account: AddressType) => {
     const contract =
       initGiveChainTokenContractAddress() as GiveChainTokenContract;
@@ -136,6 +163,7 @@ const ContractContextProvider = ({
   return (
     <ContractContext.Provider
       value={{
+        getWordsOfSupport,
         initCrowdFundContractAddress,
         initGiveChainTokenContractAddress,
         getCampaign,
@@ -145,6 +173,7 @@ const ContractContextProvider = ({
         checkAllowanceBalance,
         tokenBalance,
         setTokenBalance,
+        getCampaignUpdate,
       }}
     >
       {children}

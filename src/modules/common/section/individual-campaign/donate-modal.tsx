@@ -1,6 +1,7 @@
 import { useAccount } from "@particle-network/connect-react-ui";
 import { Button, Form, Input, Modal } from "antd";
 import { type BigNumber } from "ethers";
+import { useRouter } from "next/router";
 import numeral from "numeral";
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -43,6 +44,7 @@ const DonateModal = ({
 }: IProps) => {
   const [form] = Form.useForm();
   const account = useAccount();
+  const router = useRouter()
 
   const [donationAmount, setDonationAmount] = useState<number>();
   const [donationTipAmount, setDonationTipAmount] = useState<number>();
@@ -140,6 +142,7 @@ const DonateModal = ({
           id: notification,
         });
         setIsDonating(false);
+        router.reload()
       }
     } catch (error) {
       toast.error("Something went wrong", {
