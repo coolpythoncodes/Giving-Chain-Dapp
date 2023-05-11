@@ -140,16 +140,17 @@ const IndividualCampaign = ({ campaignId }: IndividualCampaignProps) => {
         getCampaignUpdate(campaignId).then((res: ICampaignUpdate[]) =>
           setCampaignUpdates(res)
         );
-        setCampaignUpdateText("");
         setIsSubmitting(false);
         toast.success("submission was successfull", {
           id: notification,
         });
+        setCampaignUpdateText("");
       }
     } catch (error) {
       toast.error("Opps, something went wrong", {
         id: notification,
       });
+      setIsSubmitting(false);
     }
   };
 
@@ -198,7 +199,7 @@ const IndividualCampaign = ({ campaignId }: IndividualCampaignProps) => {
                 <p className="text-base font-normal">{campaign?.category}</p>
               </div>
             </div>
-            <p className="py-6 text-base font-normal">
+            <p className="whitespace-pre-wrap py-6 text-base font-normal ">
               {campaign?.description}
             </p>
 
@@ -282,7 +283,7 @@ const IndividualCampaign = ({ campaignId }: IndividualCampaignProps) => {
                         </p>
                         <p>by {campaign?.fundraiser}</p>
                       </div>
-                      <p>{item?.description}</p>
+                      <p className="whitespace-pre-wrap">{item?.description}</p>
                     </div>
                   ))}
                 </div>
