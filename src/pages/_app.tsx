@@ -32,7 +32,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
 
   return (
     <ModalProvider
-      walletSort={["Particle Auth", "Wallet"]}
+      walletSort={["Particle Auth",]}
       particleAuthSort={[
         "email",
         "phone",
