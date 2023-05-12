@@ -11,7 +11,7 @@ import { generalRoutes } from "~/utils/data";
 const CrowdFunding = () => {
   return (
     <main className="layout-container">
-      <div className="flex flex-col-reverse items-center justify-between py-[40px] md:py-[60px] lg:flex-row lg:py-[80px]">
+      <div className="flex flex-col-reverse items-center justify-between py-[30px] md:py-[50px] lg:flex-row lg:py-[70px]">
         <div className="relative h-[50vh] w-[90%] md:w-[60%] lg:h-[70vh] lg:w-[40%] ">
           <Image src={pic1} alt="children" sizes="100%" fill />
         </div>
@@ -22,7 +22,7 @@ const CrowdFunding = () => {
           <h3 className="mb-2 text-2xl font-semibold capitalize text-[#101828] md:text-3xl lg:text-4xl lg:leading-[46px]">
             do something great to help others
           </h3>
-          <p className="text-lg font-medium text-[#4D5159] md:text-xl lg:text-2xl lg:leading-[36px]">
+          <p className="text-lg text-[#4D5159] md:text-xl lg:text-2xl lg:leading-[36px]">
             With your support, we can continue to provide these and other
             essential services to those who need it most. We believe that by
             investing in the future of our community, we can create a brighter
@@ -40,7 +40,7 @@ const CrowdFunding = () => {
           <h3 className="mb-2 text-2xl font-semibold capitalize text-[#101828] md:text-3xl lg:text-4xl lg:leading-[46px]">
             do something great to help others
           </h3>
-          <p className="text-lg font-medium text-[#4D5159] md:text-xl lg:text-2xl lg:leading-[36px]">
+          <p className="text-lg text-[#4D5159] md:text-xl lg:text-2xl lg:leading-[36px]">
             With your support, we can continue to provide these and other
             essential services to those who need it most. We believe that by
             investing in the future of our community, we can create a brighter
@@ -62,7 +62,7 @@ const CrowdFunding = () => {
           <h3 className="mb-2 text-2xl font-semibold capitalize text-[#101828] md:text-3xl lg:text-4xl lg:leading-[46px]">
             do something great to help others
           </h3>
-          <p className="text-lg font-medium text-[#4D5159] md:text-xl lg:text-2xl lg:leading-[36px]">
+          <p className="text-lg text-[#4D5159] md:text-xl lg:text-2xl lg:leading-[36px]">
             With your support, we can continue to provide these and other
             essential services to those who need it most. We believe that by
             investing in the future of our community, we can create a brighter

@@ -26,6 +26,7 @@ import {
 } from "~/utils/helper";
 import { type BigNumber } from "ethers";
 import ReactTimeAgo from "react-time-ago";
+import pic from "../../../../../public/assets/campaign/chains.jpeg";
 
 type IndividualCampaignProps = {
   campaignId: number;
@@ -184,7 +185,7 @@ const IndividualCampaign = ({ campaignId }: IndividualCampaignProps) => {
           <div className="w-full md:w-[62%]">
             <div className="relative mb-5 h-[50vh] w-full lg:h-[70vh]">
               <Image
-                src={campaign?.campaignImageUrl}
+                src={campaign?.campaignImageUrl.includes("undefined")? pic : campaign?.campaignImageUrl}
                 alt="campaign"
                 sizes="100%"
                 fill

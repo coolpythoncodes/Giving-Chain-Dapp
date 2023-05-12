@@ -108,6 +108,30 @@ input,
   outline: 0;
 }
 
+.campaign-card:hover {
+  color: black;
+}
+
+.campaigns{
+  min-height: 80vh;
+}
+
+.ant-tabs-tab:hover{
+  color: #ff6b00 !important;
+}
+
+.ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn{
+  color: #ff6b00;
+}
+
+.ant-tabs .ant-tabs-ink-bar{
+  background-color: #ff6b00 !important;
+}
+
+.ant-drawer-body .particle-account-info{
+  color: white;
+}
+
 .ant-picker-input >input{
   border-left-color: transparent !important;
   border-right-color: transparent !important;
