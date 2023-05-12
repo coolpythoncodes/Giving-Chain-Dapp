@@ -51,8 +51,8 @@ const Campaigns = () => {
             xs: 1,
             sm: 2,
             md: 3,
-            lg: 4,
-            xl: 4,
+            lg: 3,
+            xl: 3,
             xxl: 4,
           }}
           dataSource={otherCampaigns}
@@ -74,8 +74,8 @@ const Campaigns = () => {
             xs: 1,
             sm: 2,
             md: 3,
-            lg: 4,
-            xl: 4,
+            lg: 3,
+            xl: 3,
             xxl: 4,
           }}
           dataSource={myActiveCampaigns}
@@ -97,8 +97,8 @@ const Campaigns = () => {
             xs: 1,
             sm: 2,
             md: 3,
-            lg: 4,
-            xl: 4,
+            lg: 3,
+            xl: 3,
             xxl: 4,
           }}
           dataSource={myEndedCampaign}
@@ -114,7 +114,7 @@ const Campaigns = () => {
 
   return (
     <main className="bg-[#FCFCFC]">
-      <div className="layout-container">
+      <div className="layout-container campaigns">
         <div className="flex w-full items-center justify-between py-10">
           <Link href={generalRoutes.createCampaign} className="ml-auto">
             <Button className="grid-cols mb-6 mt-6 h-[50px] w-[151px] border-none bg-[#FF6B00] text-base text-white lg:mb-0 lg:mt-6">
